@@ -1,0 +1,11 @@
+markdown2
+bs4
+transformers
+numpy
+openai
+os
+impandas
+pickle
+numpy
+nltk.tokenize
+glob
