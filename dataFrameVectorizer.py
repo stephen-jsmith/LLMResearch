@@ -101,7 +101,7 @@ def vectorizeData(inputDir:str, outputDir:str, ignoreDuplicates:bool=True) -> No
         vector_embedding = compute_doc_embeddings(df)
 
         df['vector_embedding'] = pd.Series(vector_embedding)
-        df.to_csv(os.path.join(outputDir, context + '.csv'))
+        df.to_csv(os.path.join(outputDir, context.rsplit(".", 1)[0] + '.csv'))
 
         print(f'Successfully vectorized {context}!')
 
