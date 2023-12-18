@@ -52,6 +52,7 @@ def vectorize_data(inputDir: str, outputDir: str, ignoreDuplicates: bool = True)
     """
 
     ret_list = []
+    filenames = []
 
     for context in os.listdir(inputDir):
         # Open the markdown file
@@ -97,13 +98,12 @@ def vectorize_data(inputDir: str, outputDir: str, ignoreDuplicates: bool = True)
         df["vector_embedding"] = pd.Series(vector_embedding)
         
         ret_list.append(df)
+        filenames.append(context)
         
-    return ret_list
+        '''df.to_csv(os.path.join(outputDir, context.rsplit(".", 1)[0] + ".csv"))'''
+        print(f"Successfully vectorized {context}!")
 
-    '''df.to_csv(os.path.join(outputDir, context.rsplit(".", 1)[0] + ".csv"))
-
-    print(f"Successfully vectorized {context}!")
-    '''
+    return ret_list, filenames
 
 
 vectorize_data("md_files", "vectorized_dataframes")

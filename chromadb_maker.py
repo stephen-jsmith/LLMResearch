@@ -1,30 +1,15 @@
 # Import Statements
 import pandas as pd
 import chromadb
-import markdown2
-from bs4 import BeautifulSoup
-from transformers import GPT2TokenizerFast
-import numpy as np
-import openai
-from openai import OpenAI
-import os
-import pickle
-import numpy as np
-from nltk.tokenize import sent_tokenize
-import glob
-from data_frame_vectorizer import vectorize_data
+from chromadb.config import Settings
 
-FILENAME = "vectorized_dataframes/apps.csv"
 
 # Create the chroma client, collection for data
-chroma_client = chromadb.PersistentClient(
-    path="C:\\Users\\Stephen\\LLMResearch\\chromaSaveStates"
+chroma_client = chromadb.Client(
+    Settings(persist_directory="chromaSaveStates")
 )
 collection = chroma_client.get_or_create_collection(name="Testing1")
 
-
-# Load the data
-df = pd.read_csv(FILENAME)
 
 collection.add(
     documents=["This is a document", "This is another document"],

@@ -32,6 +32,10 @@ def add_data_pandas(
     collection_name -- Location within the chromadb for the data to be added to
     """
 
+    #Verify there is data to add
+    if not list(df.index.values):
+        print(f'{filename} is empty, please check to verify data')
+        return
     collection = client.get_or_create_collection(name=collection_name)
 
     meta = []
@@ -54,11 +58,11 @@ def add_data_csv(filename: str, client: chromadb.PersistentClient):
 df = pd.read_csv("vectorized_dataframes/actor.csv")
 chroma_client = chromadb.Client(
     Settings(
-        persist_directory="C:\\Users\\Stephen\\LLMResearch\\chromaSaveStates",
+        persist_directory="chromaSaveStates",
         allow_reset=True,
     )
 )
 
-vector_dataframes = vectorize_data('md_files', 'vectorized_dataframes')
-for i in vector_dataframes:
-    add_data_csv
+vector_dataframes, filenames = vectorize_data('md_files', 'vectorized_dataframes')
+for i in range(len(vector_dataframes)):
+    add_data_pandas(vector_dataframes[i], filenames[i], chroma_client, "testing")
