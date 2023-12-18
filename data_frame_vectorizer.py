@@ -11,11 +11,10 @@ import numpy as np
 from nltk.tokenize import sent_tokenize
 import glob
 
-COMPLETIONS_MODEL = "text-davinci-003"
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
 # Authenticate with OpenAI API
-with open('apiKeys.txt', 'r') as temp:
+with open("apiKeys.txt", "r") as temp:
     apiKey = temp.read()
 client = OpenAI(api_key=apiKey)
 
@@ -23,43 +22,40 @@ tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 
 MAX_WORDS = 500
 
+
 def count_tokens(text: str) -> int:
     """count the number of tokens in a string"""
     return len(tokenizer.encode(text))
 
-def get_embedding(text: str, model: str=EMBEDDING_MODEL):
-    result = client.embeddings.create(model=model,
-                                        input=text).data[0].embedding
+
+def get_embedding(text: str, model: str = EMBEDDING_MODEL):
+    result = client.embeddings.create(model=model, input=text).data[0].embedding
     return result
 
 
 def compute_doc_embeddings(df: pd.DataFrame):
     """
     Create an embedding for each row in the dataframe using the OpenAI Embeddings API.
-    
+
     Return a dictionary that maps between each embedding vector and the index of the row that it corresponds to.
     """
-    return {
-        idx: get_embedding(r.content) for idx, r in df.iterrows()
-    }
+    return {idx: get_embedding(r.content) for idx, r in df.iterrows()}
 
-def vectorizeData(inputDir:str, outputDir:str, ignoreDuplicates:bool=True) -> None:
-    '''
+
+def vectorize_data(inputDir: str, outputDir: str, ignoreDuplicates: bool = True) -> list:
+    """
     Takes in a directory of markdown files to vectorize
-    
+
     ##### Args #####
     :type dir: str
     :arg dir: Directory of the files you wish to vectorize
-    '''
+    """
+
+    ret_list = []
 
     for context in os.listdir(inputDir):
-        '''# Check to see if the data has already been processed
-        if ignoreDuplicates:
-            if glob.glob(os.path.join(os.path.splitext(context)[0])):
-                continue'''
-
         # Open the markdown file
-        with open(os.path.join(inputDir,context), "r") as file:
+        with open(os.path.join(inputDir, context), "r") as file:
             content = file.read()
 
         # Use markdown2 to convert the markdown file to html
@@ -92,17 +88,22 @@ def vectorizeData(inputDir:str, outputDir:str, ignoreDuplicates:bool=True) -> No
                 paragraphs.append(tag.text)
 
         df = pd.DataFrame(data, columns=["heading", "content", "tokens"])
-        df = df[df.tokens>40]
-        df = df.reset_index().drop('index',axis=1) # reset index
+        df = df[df.tokens > 40]
+        df = df.reset_index().drop("index", axis=1)  # reset index
         df.head()
-
-
 
         vector_embedding = compute_doc_embeddings(df)
 
-        df['vector_embedding'] = pd.Series(vector_embedding)
-        df.to_csv(os.path.join(outputDir, context.rsplit(".", 1)[0] + '.csv'))
+        df["vector_embedding"] = pd.Series(vector_embedding)
+        
+        ret_list.append(df)
+        
+    return ret_list
 
-        print(f'Successfully vectorized {context}!')
+    '''df.to_csv(os.path.join(outputDir, context.rsplit(".", 1)[0] + ".csv"))
 
-vectorizeData('mdFiles', 'vectorizedDataFrames')
+    print(f"Successfully vectorized {context}!")
+    '''
+
+
+vectorize_data("md_files", "vectorized_dataframes")
