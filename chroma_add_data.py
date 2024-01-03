@@ -32,9 +32,11 @@ def add_data_pandas(
     collection_name -- Location within the chromadb for the data to be added to
     """
 
-    #Verify there is data to add
+    # Verify there is data to add
     if not list(df.index.values):
-        print(f'{filename} is empty, please check to verify data')
+        print(
+            f"*****************\n{filename} is empty, please check to verify data\n*****************"
+        )
         return
     collection = client.get_or_create_collection(name=collection_name)
 
@@ -47,6 +49,7 @@ def add_data_pandas(
         metadatas=meta,
         ids=[filename + str(i) for i in list(df.index.values)],
     )
+    print(f"{filename} has been added to the Database!")
     return
 
 
@@ -63,6 +66,7 @@ chroma_client = chromadb.Client(
     )
 )
 
-vector_dataframes, filenames = vectorize_data('md_files', 'vectorized_dataframes')
+vector_dataframes, filenames = vectorize_data("md_files", "vectorized_dataframes")
 for i in range(len(vector_dataframes)):
     add_data_pandas(vector_dataframes[i], filenames[i], chroma_client, "testing")
+chroma_client.delete_collection(name="testing")
