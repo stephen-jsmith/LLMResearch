@@ -41,13 +41,16 @@ def md_to_jsonl(md_file_dir, jsonl_file):
             clean_section = heading_regex.sub("", clean_section).strip()
 
             # Create a JSON object for this section
-            section_json = {
+            """section_json = {
                 "filename": md_file_path,
                 "heading": heading.strip("# ").strip(),
                 "text": clean_section,
                 "code": code,
             }
-
+            """
+            section_json = {
+                "text": f'filename: {md_file_path}, heading: {heading.strip("# ").strip()}, text: {clean_section}, code: {code}'
+            }
             # Append to the list if there's meaningful content
             if section_json["text"] or section_json["code"]:
                 jsonl_data.append(section_json)
