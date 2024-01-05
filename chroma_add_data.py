@@ -13,6 +13,10 @@ import numpy as np
 from nltk.tokenize import sent_tokenize
 import glob
 from data_frame_vectorizer import vectorize_data
+from chromadb.utils import embedding_functions
+
+# Define embedding function
+ef = embedding_functions.DefaultEmbeddingFunction()
 
 
 # Add data straight from a dataframe
@@ -38,7 +42,9 @@ def add_data_pandas(
             f"*****************\n{filename} is empty, please check to verify data\n*****************"
         )
         return
-    collection = client.get_or_create_collection(name=collection_name)
+    collection = client.get_or_create_collection(
+        name=collection_name, embedding_function=ef
+    )
 
     meta = []
     for i in df["heading"]:
@@ -53,20 +59,15 @@ def add_data_pandas(
     return
 
 
-# Load data using a csv file and then use the previous function to add to database
-def add_data_csv(filename: str, client: chromadb.PersistentClient):
-    return
-
-
-df = pd.read_csv("vectorized_dataframes/actor.csv")
-chroma_client = chromadb.Client(
-    Settings(
-        persist_directory="chromaSaveStates",
-        allow_reset=True,
-    )
-)
+chroma_client = chromadb.PersistentClient(path="./chroma_save_states")
 
 vector_dataframes, filenames = vectorize_data("md_files", "vectorized_dataframes")
 for i in range(len(vector_dataframes)):
     add_data_pandas(vector_dataframes[i], filenames[i], chroma_client, "testing")
-chroma_client.delete_collection(name="testing")
+
+collection = chroma_client.get_collection("testing")
+collection.query(query_texts=["What is Abaca?"], n_results=5)
+
+print(chroma_client)
+
+chroma_client.hearbeat()
