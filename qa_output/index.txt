@@ -1,0 +1,35 @@
+Information: 
+
+The Grand Canyon is a steep-sided canyon carved by the Colorado River in Arizona, United States. The Grand Canyon is 277 miles (446 km) long, up to 18 miles (29 km) wide and attains a depth of over a mile (6,093 feet or 1,857 meters). Nearly two billion years of Earth's geological history have been exposed as the Colorado River and its tributaries cut their channels through layer after layer of rock while the Colorado Plateau was uplifted. While the specific geologic processes and timing that formed the Grand Canyon are the subject of debate by geologists, recent evidence suggests that the Colorado River established its course through the canyon at least 17 million years ago. Since that time, the Colorado River continued to erode and form the canyon to its present-day configuration.
+
+Questions & Answers:
+
+1. Q: Where is the Grand Canyon located?
+   A: The Grand Canyon is located in Arizona, United States.
+
+2. Q: What carved the Grand Canyon?
+   A: The Grand Canyon was carved by the Colorado River.
+
+3. Q: How long is the Grand Canyon?
+   A: The Grand Canyon is 277 miles (446 km) long.
+
+4. Q: What is the maximum width of the Grand Canyon?
+   A: The Grand Canyon is up to 18 miles (29 km) wide.
+
+5. Q: How deep is the Grand Canyon?
+   A: The Grand Canyon attains a depth of over a mile (6,093 feet or 1,857 meters).
+
+6. Q: How many years of Earth's geological history have been exposed in the Grand Canyon?
+   A: Nearly two billion years of Earth's geological history have been exposed in the Grand Canyon.
+
+7. Q: What geological event caused the formation of the Grand Canyon?
+   A: The Colorado River and its tributaries cut their channels through layer after layer of rock while the Colorado Plateau was uplifted.
+
+8. Q: When did the Colorado River establish its course through the Grand Canyon?
+   A: Recent evidence suggests that the Colorado River established its course through the canyon at least 17 million years ago.
+
+9. Q: What has the Colorado River been doing since it established its course through the Grand Canyon?
+   A: Since that time, the Colorado River continued to erode and form the canyon to its present-day configuration.
+
+10. Q: Are the specific geologic processes and timing that formed the Grand Canyon agreed upon by all geologists?
+   A: No, the specific geologic processes and timing that formed the Grand Canyon are the subject of debate by geologists.

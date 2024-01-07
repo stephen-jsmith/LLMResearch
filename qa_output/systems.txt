@@ -1,0 +1,253 @@
+1. Question: What is a Tapis system?
+   Answer: A Tapis system represents a server or collection of servers exposed through a single host name or IP address. Each system is associated with a specific tenant and can be used for running a job or storing and retrieving files and data.
+
+2. Question: What are the purposes of a Tapis system?
+   Answer: A Tapis system can be used for running a job, including staging files to a system in preparation for running a job, executing a job on a system, and archiving files and data on a remote system after job execution. It can also be used for storing and retrieving files and data.
+
+3. Question: What is the effectiveUserId in a Tapis system?
+   Answer: The effectiveUserId in a Tapis system is the user that is used to access the system. This access user can be a specific user (such as a service account) or dynamically specified as `${apiUserId}`.
+
+4. Question: What is the systemType in a Tapis system?
+   Answer: The systemType in a Tapis system refers to the type of system, such as LINUX, S3, IRODS or GLOBUS.
+
+5. Question: What is the defaultAuthnMethod in a Tapis system?
+   Answer: The defaultAuthnMethod in a Tapis system refers to how access authentication is handled by default. Supported methods include PASSWORD, PKI_KEYS, ACCESS_KEY, and TOKEN.
+
+6. Question: What is the rootDir in a Tapis system?
+   Answer: The rootDir in a Tapis system refers to the directory to be used when listing files or moving files to and from the system.
+
+7. Question: What is the dtnSystemId in a Tapis system?
+   Answer: The dtnSystemId in a Tapis system refers to an alternate system to use as a Data Transfer Node (DTN) during job execution. The execution system and the DTN system must have shared storage.
+
+8. Question: What does the canExec attribute indicate in a Tapis system?
+   Answer: The canExec attribute in a Tapis system indicates if the system can be used to execute jobs.
+
+9. Question: How can a Tapis system be created?
+   Answer: A Tapis system can be created by creating a local file with json similar to the provided example and using PySDK or CURL to post the json.
+
+10. Question: How can credentials be registered for a Tapis system?
+    Answer: Credentials can be registered for a Tapis system by creating a local file with json similar to the provided example and using PySDK or CURL to post the json. Various authentication methods can be used to access a system, such as PASSWORD, PKI_KEYS and TOKEN.1. Question: What are some important points to keep in mind when using an ssh keypair as credentials?
+   Answer: The public key and private key must be encoded on a single line, the keypair should not be of type OPENSSH, the keypair should not have a passphrase, and the host should not have multi-factor authentication enabled.
+
+2. Question: What command can be used to convert a multi-line private key into a single line?
+   Answer: The command is `cat $privateKeyFile | awk -v ORS='\\n' '1'`.
+
+3. Question: What type of key does Tapis not currently support?
+   Answer: Tapis does not currently support OPENSSH type keys.
+
+4. Question: How can you generate a keypair that is not of type OPENSSH?
+   Answer: You can use the command `ssh-keygen -t rsa -b 4096 -m PEM`.
+
+5. Question: What is a special case when registering credentials for a system?
+   Answer: Registering credentials for a GLOBUS type system is a special case that involves different steps.
+
+6. Question: How can a user obtain a Globus authorization code?
+   Answer: The user can call the systems *authUrl* credential endpoint to obtain a Globus authorization code.
+
+7. Question: What is the final step in generating Globus credentials?
+   Answer: The final step is for the user to call the systems credential endpoint to exchange the authorization code and session ID for tokens.
+
+8. Question: How can a user retrieve details for a specific system?
+   Answer: The user can use the CURL command `$ curl -H "X-Tapis-Token: $JWT" https://tacc.tapis.io/v3/systems/tacc-sample-<userid>`.
+
+9. Question: What information is returned when retrieving details for a specific system?
+   Answer: Information such as the tenant, id, description, system type, owner, host, and other system details are returned.
+
+10. Question: Are Tapis services authorized to retrieve credentials?
+    Answer: Only specific Tapis services are authorized to retrieve credentials.1. Question: How can I retrieve details for all systems I own?
+   Answer: You can retrieve details for all systems you own using PySDK or CURL. For CURL, use the command `$ curl -H "X-Tapis-Token: $JWT" https://tacc.tapis.io/v3/systems?select=allAttributes`. The response should contain a list of items similar to the single listing shown above.
+
+2. Question: What is a child system?
+   Answer: A child system is a system that is based on an existing system. It allows a user to set only a few fields, and use all other values from the existing system. This reduces the difficulty in creating a child system, but also allows the child system to be updated when the parent is updated.
+
+3. Question: How can I create a child system?
+   Answer: To create a child system, create a local file with the necessary details and use the create child system REST endpoint to create the child system. You can use PySDK or CURL for this.
+
+4. Question: What fields are maintained independently for child systems?
+   Answer: The fields that are maintained independently for child systems are id, owner, enabled, effectiveUserId, rootDir, deleted, created, and updated.
+
+5. Question: What is the purpose of the 'id' field in a child system?
+   Answer: The 'id' field is an identifier for the system. It must be unique and URI safe.
+
+6. Question: What is the 'owner' field in a child system?
+   Answer: The 'owner' field is the username of the owner. By default, this is the resolved value for ${apiUserId}.
+
+7. Question: What does the 'enabled' field indicate in a child system?
+   Answer: The 'enabled' field indicates if the system is currently enabled for use. It may be updated using the enable/disable endpoints.
+
+8. Question: What is the 'effectiveUserId' field in a child system?
+   Answer: The 'effectiveUserId' field is the user to use when accessing the system. It may be a static string or a variable reference.
+
+9. Question: What is the 'rootDir' field in a child system?
+   Answer: The 'rootDir' field is required if the system type is LINUX or IRODS or if 'isDtn' is true. It serves as the effective root directory when listing or moving files.
+
+10. Question: What does the 'deleted' field indicate in a child system?
+    Answer: The 'deleted' field indicates if the system has been deleted. It may be updated using the delete/undelete endpoints.1. Question: How are updates done on a child system?
+   Answer: Updates are done just like any other system, however, only the effectiveUserId field may be updated for a child system.
+
+2. Question: Can other fields be updated in a child system?
+   Answer: Yes, some other fields can be updated through special endpoints. For example, 'deleted' and 'enabled' are updated through the endpoints for deleting, undeleting, enabling, and disabling.
+
+3. Question: Are operations for child systems different from parent systems?
+   Answer: Most operations other than update are the same for child systems as they are for parent systems.
+
+4. Question: Can a child system be unlinked from its parent system?
+   Answer: Yes, a child system may be unlinked from its parent. This is a permanent operation, and cannot be undone. This will make the child a standalone system with all of its current settings.
+
+5. Question: How can the owner of a child system unlink it from its parent?
+   Answer: The owner can use the 'unlinkFromParent' endpoint. They can use PySDK or CURL to do this.
+
+6. Question: Can the owner of a parent system unlink child systems from the parent?
+   Answer: Yes, the owner of a parent system can decide to unlink child systems from the parent. They would use the 'unlinkChildren' endpoint.
+
+7. Question: What are the required attributes when creating a system?
+   Answer: The required attributes are: id, systemType, host, defaultAuthnMethod, and canExec.
+
+8. Question: Are there any restrictions when creating a system?
+   Answer: Yes, depending on the type of system and specific values for certain attributes there are other requirements. For example, if systemType is S3 then bucketName is required, canExec and isDtn must be false.
+
+9. Question: Who is given full access to the system at system creation time?
+   Answer: At system creation time the owner is given full access to the system.
+
+10. Question: How are permissions specified?
+   Answer: Permissions are specified as either '*' for all permissions or some combination of the following specific permissions: ("READ","MODIFY","EXECUTE"). Having 'MODIFY' implies 'READ'.1. Question: What is the sharing feature in Tapis?
+   Answer: The sharing feature in Tapis is a higher level approach to granting access. It allows you to share a system with a set of users or publicly with all users in a tenant. It provides `READ+EXECUTE` access and when the system has a dynamic `effectiveUserId`, sharing also allows for `MODIFY` access to all paths for calls made through the Files service.
+
+2. Question: How are authentication credentials specified in Tapis?
+   Answer: At system creation time, the authentication credentials may be specified if the effective access user `effectiveUserId` is a specific user. If the effective access user is dynamic, then authentication credentials for any user allowed to access the system must be registered in separate API calls.
+
+3. Question: What is the runtime environment in Tapis?
+   Answer: The runtime environment in Tapis is supported by the system that may be used to run applications, such as docker or singularity. It consists of the runtime type and version.
+
+4. Question: What is a Logical Batch Queue in Tapis?
+   Answer: A Logical Batch Queue in Tapis is a queue that maps to a single HPC queue. They provide a uniform front end abstraction for an HPC queue and offer more features and flexibility than is typically provided by an HPC scheduler.
+
+5. Question: What happens when a system is deleted in Tapis?
+   Answer: When a system is deleted in Tapis, it is marked as deleted and is no longer available for use. Deleted systems will not be included in searches and operations on deleted systems will not be allowed.
+
+6. Question: What is the `tenant` attribute in the System Attributes Table?
+   Answer: The `tenant` attribute is the name of the tenant for which the system is defined. It is determined by the service at system creation time and must be unique when combined with the `id` attribute.
+
+7. Question: What is the `bucketName` attribute in the System Attributes Table?
+   Answer: The `bucketName` attribute is the name of the bucket for an S3 system. It is required if the `systemType` is S3.
+
+8. Question: What is the `rootDir` attribute in the System Attributes Table?
+   Answer: The `rootDir` attribute is required if the `systemType` is LINUX or IRODS or `isDtn` is true. It serves as the effective root directory when listing or moving files.
+
+9. Question: What is the `jobRuntimes` attribute in the System Attributes Table?
+   Answer: The `jobRuntimes` attribute is a list of runtime environments supported by the system. At least one entry is required if `canExec` is true.
+
+10. Question: What is the `deleted` attribute in the System Attributes Table?
+    Answer: The `deleted` attribute indicates if the system has been deleted. It can be updated using the delete/undelete endpoints.1. Q: What does the 'user' attribute represent in the Credential Attributes Table?
+   A: The 'user' attribute represents the username associated with the credential.
+
+2. Q: What does the 'authnMethod' attribute indicate in the Credential Attributes Table?
+   A: The 'authnMethod' attribute indicates the authentication method associated with a retrieved credential.
+
+3. Q: What are the possible methods for 'authnMethod'?
+   A: The possible methods for 'authnMethod' are PASSWORD, PKI_KEYS, ACCESS_KEY, and TOKEN.
+
+4. Q: What is the purpose of the 'loginUser' attribute in the Credential Attributes Table?
+   A: The 'loginUser' attribute is an optional native username valid on the system. It may be used to map a Tapis user to a native login user.
+
+5. Q: What is the 'password' attribute used for in the Credential Attributes Table?
+   A: The 'password' attribute is used when the 'authnMethod' is PASSWORD. It is applicable for LINUX and IRODS systems.
+
+6. Q: What does the 'key' attribute represent in the KeyValuePair Attributes Table?
+   A: The 'key' attribute represents the environment variable name. It is required.
+
+7. Q: What is the 'value' attribute in the KeyValuePair Attributes Table?
+   A: The 'value' attribute represents the environment variable value.
+
+8. Q: What does the 'inputMode' attribute indicate in the KeyValuePair Attributes Table?
+   A: The 'inputMode' attribute indicates how an argument is to be treated when processing individual job requests.
+
+9. Q: What are the possible modes for 'inputMode'?
+   A: The possible modes for 'inputMode' are REQUIRED, FIXED, INCLUDE_ON_DEMAND, and INCLUDE_BY_DEFAULT.
+
+10. Q: What is the 'notes' attribute in the KeyValuePair Attributes Table?
+    A: The 'notes' attribute is simple metadata in the form of a Json object. It is not used by Tapis.1. Q: What is the purpose of the 'name' attribute in the LogicalQueue Attributes Table?
+   A: The 'name' attribute is used to provide a name for the logical queue. This typically matches or is a variant of the HPC queue name.
+
+2. Q: What does the 'hpcQueueName' attribute represent?
+   A: The 'hpcQueueName' attribute represents the name of the HPC queue for which the logical queue is a front end.
+
+3. Q: What is the 'maxJobs' attribute used for?
+   A: The 'maxJobs' attribute is used to specify the maximum total number of jobs that can be queued or running in the queue.
+
+4. Q: What does the 'maxJobsPerUser' attribute indicate?
+   A: The 'maxJobsPerUser' attribute indicates the maximum number of jobs associated with a specific user that can be queued.
+
+5. Q: What is the purpose of the 'minNodeCount' and 'maxNodeCount' attributes?
+   A: The 'minNodeCount' and 'maxNodeCount' attributes are used to specify the minimum and maximum number of nodes that can be requested when submitting a job to the queue, respectively.
+
+6. Q: What does the 'minCoresPerNode' attribute represent?
+   A: The 'minCoresPerNode' attribute represents the minimum number of cores per node that can be requested when submitting a job. The default is 1.
+
+7. Q: What is the 'maxCoresPerNode' attribute used for?
+   A: The 'maxCoresPerNode' attribute is used to specify the maximum number of cores per node that can be requested when submitting a job.
+
+8. Q: What does the 'minMemoryMB' attribute indicate?
+   A: The 'minMemoryMB' attribute indicates the minimum memory in megabytes that can be requested when submitting a job. The default is 0.
+
+9. Q: What is the purpose of the 'maxMemoryMB' attribute?
+   A: The 'maxMemoryMB' attribute is used to specify the maximum memory in megabytes that can be requested when submitting a job. The default is unlimited.
+
+10. Q: What does the 'minMinutes' and 'maxMinutes' attributes represent?
+    A: The 'minMinutes' and 'maxMinutes' attributes represent the minimum and maximum run time in minutes that can be requested when submitting a job, respectively. The default for 'minMinutes' is 0 and for 'maxMinutes' is unlimited.1. Question: What is the dedicated search endpoint?
+   Answer: The dedicated search endpoint is `systems/search/systems`. It is used for specifying complex queries.
+
+2. Question: How can I use a GET request on the dedicated search endpoint?
+   Answer: A GET request to the search endpoint provides functionality similar to the `systems` endpoint. You can specify a list of search conditions using a series of query parameters, one for each attribute. All conditions are combined using logical AND.
+
+3. Question: What are the supported operators for the search endpoint?
+   Answer: The supported operators are `eq`, `neq`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `like`, `nlike`, `between`, `nbetween`.
+
+4. Question: How can I use a POST request on the dedicated search endpoint?
+   Answer: For more complex search queries, you can send a POST request to the endpoint `systems/search/systems`. The request body must contain json with a top level property name of `search`, which contains an array of strings specifying the search criteria in an SQL-like syntax.
+
+5. Question: What SQL features are not supported in the search endpoint?
+   Answer: The SQL features not supported include `IS NULL` and `IS NOT NULL`, arithmetic operations, unary operators, and specifying escape character for `LIKE` operator.
+
+6. Question: How are SQL operators mapped to Tapis operators?
+   Answer: The mapping is as follows: `=` is `eq`, `<>` is `neq`, `<` is `lt`, `<=` is `lte`, `>` is `gt`, `>=` is `gte`, `LIKE` is `like`, `NOT LIKE` is `nlike`, `BETWEEN` is `between`, `NOT BETWEEN` is `nbetween`, `IN` is `in`, `NOT IN` is `nin`.
+
+7. Question: How can I sort, limit, select and listType when retrieving a list of Systems?
+   Answer: The service provides for sorting, filtering and limiting the results using query parameters. By default, only resources owned by you will be included. You can request that all resources accessible to you be included using the query parameter *listType*.
+
+8. Question: How can I select specific fields when retrieving systems?
+   Answer: The fields to be returned may be specified as a comma separated list using a query parameter named `select`. Attribute names may be given using Camel Case or Snake Case.
+
+9. Question: What are the special select keywords?
+   Answer: The special select keywords are `allAttributes` and `summaryAttributes`.
+
+10. Question: What happens if I don't specify any attributes when retrieving a single resource or a list of systems?
+   Answer: By default all attributes are returned when retrieving a single resource via the endpoint *systems/\<system_id\>*. By default summary attributes are returned when retrieving a list of systems.1. Question: What is the query parameter for sorting?
+   Answer: The query parameter for sorting is named `orderBy`.
+
+2. Question: How can I specify the direction of sorting?
+   Answer: The direction can be specified as `asc` for ascending or `desc` for descending.
+
+3. Question: What are the query parameters for limiting the number and starting point for results?
+   Answer: The query parameters for limiting are `limit`, `skip`, and `startAfter`.
+
+4. Question: What is the default limit for the number of items returned?
+   Answer: The default limit for the number of items returned is 100.
+
+5. Question: What does the query parameter `listType` do?
+   Answer: The `listType` query parameter allows you to see additional resources that are available to you.
+
+6. Question: What are the options for the `listType` query parameter?
+   Answer: The options for `listType` are `OWNED`, `SHARED_PUBLIC`, and `ALL`.
+
+7. Question: What information does the metadata object in the response contain?
+   Answer: The metadata object contains information related to sorting and limiting, such as `recordCount`, `recordLimit`, `recordsSkipped`, `orderBy`, `startAfter`, and `totalCount`.
+
+8. Question: What is the default value for the `computeTotal` query parameter?
+   Answer: The default value for `computeTotal` is *false*.
+
+9. Question: How can I request the total count of records?
+   Answer: You can request the total count of records by setting the `computeTotal` query parameter to *true*.
+
+10. Question: What does the `startAfter` query parameter do?
+    Answer: The `startAfter` query parameter specifies where to start when sorting. It applies to the major `orderBy` field and its condition is context dependent.

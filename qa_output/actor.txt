@@ -1,0 +1,141 @@
+1. Question: What is Abaco?
+   Answer: Abaco is an NSF-funded web service and distributed computing platform providing functions-as-a-service (FaaS) to the research computing community. It implements functions using the Actor Model of concurrent computation. Each actor in Abaco is associated with a Docker image, and actor containers are executed in response to messages posted to their inbox.
+
+2. Question: What are the primary higher-level capabilities of Abaco?
+   Answer: Abaco offers three primary higher-level capabilities: Reactors for event-driven programming, Asynchronous Executors for scaling out function calls within running applications, and Data Adapters for creating rationalized microservices from disparate and heterogeneous sources of data.
+
+3. Question: How can one start using Abaco?
+   Answer: Abaco is available to researchers and students. To start using it, one needs to follow the instructions in the getting started guide which includes setting up the necessary accounts and installing the required software.
+
+4. Question: Where is the main instance of the Abaco platform hosted?
+   Answer: The main instance of the Abaco platform is hosted at the Texas Advanced Computing Center (TACC).
+
+5. Question: What is Docker and why is it needed for Abaco?
+   Answer: Docker is an open-source container runtime providing operating-system-level virtualization. Abaco pulls images for its actors from the public Docker Hub. To register actors, one needs to publish images on Docker Hub, which requires a Docker account.
+
+6. Question: What is the Tapis Python SDK and how can it be installed?
+   Answer: The Tapis Python SDK, tapipy, is used to interact with the TACC-hosted Abaco platform in Python. It can be installed by running the appropriate command in Python 3.
+
+7. Question: What is the first step in using the Tapis Python SDK?
+   Answer: The first step in using the Tapis Python SDK, tapipy, is to create a Tapis Client object. This involves importing the Tapis class and creating a python object that points to the Tapis server using your TACC username and password.
+
+8. Question: How is authentication and authorization to the Tapis APIs handled?
+   Answer: Authentication and authorization to the Tapis APIs uses OAuth2, a widely-adopted web standard. Access credentials and digital assets are kept secure by exchanging credentials for an access token, which is cryptographically signed by the OAuth server and includes information about the user's identity.
+
+9. Question: How can one check access to the Tapis APIs?
+   Answer: Access to the Tapis APIs can be checked by making any API call. For example, one can use the authenticator service to retrieve the full TACC profile of the user.
+
+10. Question: What is the purpose of the Abaco Quickstart?
+    Answer: The Abaco Quickstart guide helps users create an Abaco actor from a basic Python function, execute the actor on the Abaco cloud, and retrieve the execution results.1. Question: What does the example.py script do?
+   Answer: The example.py script counts the number of words in a message. It splits the message into words and then prints the number of words.
+
+2. Question: How is a Docker image built from a Dockerfile?
+   Answer: A Docker image is built from a Dockerfile, which is a text file that serves as a recipe for creating images. The Dockerfile contains instructions that add files/folders and metadata to the image.
+
+3. Question: What is the purpose of the FROM instruction in a Dockerfile?
+   Answer: The FROM instruction is used to start a new image from a known image. It should be the first line of the Dockerfile.
+
+4. Question: What are the RUN, ADD, and CMD instructions in a Dockerfile?
+   Answer: The RUN instruction is used to run arbitrary Linux commands to add files to the image. The ADD instruction is used to add local files to the image. The CMD instruction is used to write the command for running the application.
+
+5. Question: How is a Docker image registered as an Abaco actor?
+   Answer: A Docker image is registered as an Abaco actor using the tapipy library's actors.add() method. The arguments describing the actor are passed through the body parameter.
+
+6. Question: How is an Abaco actor executed?
+   Answer: An Abaco actor is executed by sending it a message using the send_message() method. The actor processes the message and responds with JSON, including an id for the execution.
+
+7. Question: How are the logs from an actor execution retrieved?
+   Answer: The logs from an actor execution are retrieved using the get_execution_logs() method, passing the actor_id and execution_id.
+
+8. Question: What can be done with the Abaco system?
+   Answer: With the Abaco system, you can create, register, and execute actors. It also offers additional capabilities, which can be learned about in the Technical Guide.
+
+9. Question: What properties can be set when registering an actor?
+   Answer: When registering an actor, properties such as image, name, description, default environment, hints, link, privileged, stateless, token, use_container_uid, run_as_executor, and webhook can be set.
+
+10. Question: What does the stateless property mean when registering an actor?
+    Answer: The stateless property indicates whether the actor stores private state as part of its execution. If True, the state API will not be available, but the Abaco service will be able to automatically scale reactor processes to execute messages in parallel. The default value is False.1. Question: What is the `default_environment` used for in Abaco?
+   Answer: The `default_environment` in Abaco is used to provide sensitive information to the actor that cannot be put in the image.
+
+2. Question: How can one execute privileged actors or override the UID/GID used when executing an actor container in Abaco?
+   Answer: To execute privileged actors or to override the UID/GID used when executing an actor container, one needs to talk to the Abaco development team about their use case.
+
+3. Question: What does Abaco support for performance reasons?
+   Answer: Abaco supports running specific actors within a given tenant on dedicated and/or specialized hardware for performance reasons. It accomplishes this through the use of actor `queues`.
+
+4. Question: How can one set the default environment using curl in Abaco?
+   Answer: To set the default environment using curl, one must pass content type `application/json` and be sure to pass properly formatted JSON in the payload.
+
+5. Question: How can one register the same actor using the tapipy library in Abaco?
+   Answer: To register the same actor using the tapipy library, one uses the `actors.create_actor()` method and pass the same arguments through the `request_body` parameter. The `default_environment` is just a standard Python dictionary where the keys and values are `str` type.
+
+6. Question: What is the `context` in Abaco?
+   Answer: In Abaco, when an actor container is launched, information about the execution is injected into a number of environment variables. This information is collectively referred to as the `context`.
+
+7. Question: What is the `_abaco_actor_dbid` in Abaco?
+   Answer: The `_abaco_actor_dbid` in Abaco is unique to each actor. Using this id, an actor can distinguish itself from other actors registered with the same function providing for SPMD techniques.
+
+8. Question: What is the `_abaco_access_token` in Abaco?
+   Answer: The `_abaco_access_token` in Abaco is a valid OAuth token that actors can use to make authenticated requests to other TACC Cloud APIs during their execution.
+
+9. Question: What utilities does the `tapipy.actors` module provide in Abaco?
+   Answer: The `tapipy.actors` module in Abaco provides utilities such as `get_context()`, `get_client()`, and `update_state(val)`.
+
+10. Question: What does the `get_context()` utility return in Abaco?
+    Answer: The `get_context()` utility in Abaco returns a Python dictionary with fields such as `raw_message`, `content_type`, `message_dict`, `execution_id`, `username`, `state`, and `actor_id`.1. Question: What is the Runtime Environment in Abaco?
+   Answer: The environment in which an Abaco actor container runs has been built to accommodate a number of typical use cases encountered in research computing in a secure manner.
+
+2. Question: How does Abaco handle Container UID and GID?
+   Answer: When Abaco launches an actor container, it instructs Docker to execute the process using the UID and GID associated with the TACC account of the owner of the actor. This guarantees that an Abaco actor will have the same accesses as the original author of the actor.
+
+3. Question: What is the POSIX Interface to the TACC WORK File System in Abaco?
+   Answer: When Abaco launches an actor container, it mounts the actor owner's TACC WORK file system into the running container. The owner's work file system is made available at `/work` within the container. This gives the actor a POSIX interface to the work file system.
+
+4. Question: What are Messages, Executions, and Logs in Abaco?
+   Answer: Messages are the information sent to an Abaco actor to execute a job. Once a message is sent, the actor creates an execution with a unique `execution_id`. Executions also have logs, which are the command line logs of the running execution.
+
+5. Question: What is a message in Abaco?
+   Answer: A message is the data given to an actor to run the actor. This data can be in the form of a raw message string, JSON, or binary. Once this message is sent, the Abaco actor will queue an execution of the actor's specified image.
+
+6. Question: How can you send a message in Abaco?
+   Answer: You can send a message to the `messages` endpoint with cURL or Python using `tapipy`.
+
+7. Question: How can you get the message count in Abaco?
+   Answer: You can retrieve the current number of messages an actor has with the `messages` end point using cURL or Python with `tapipy`.
+
+8. Question: What are Binary Messages in Abaco?
+   Answer: Binary Messages in Abaco are binary data sent through a Unix Named Pipe (FIFO), stored at /\_abaco_binary_data, and can be retrieved from within the execution using a FIFO message reading function.
+
+9. Question: How can you send a binary message in Abaco?
+   Answer: You can send a binary message in Abaco using Python and `tapipy`. This involves creating a binary message from a file and sending it to the actor as a message with the sendBinaryMessage function.
+
+10. Question: What is the feature of sending binary from execution in Abaco?
+    Answer: Abaco allows you to write to a socket connected to an Abaco endpoint from within an execution. This Unix Domain (Datagram) socket is mounted in the actor container at /\_abaco_results.sock. You can use `tapipy` functions to write binary data to this socket.1. Question: What is cURL used for?
+   Answer: cURL is used to retrieve results from a server using a variety of protocols.
+
+2. Question: How do you retrieve a result with cURL?
+   Answer: To retrieve a result with cURL, you would need to send a request to the server using the appropriate command and protocol.
+
+3. Question: Is cURL a programming language?
+   Answer: No, cURL is not a programming language. It is a command-line tool used for transferring data using various protocols.
+
+4. Question: Can cURL be used with any server?
+   Answer: Yes, cURL can be used with any server as long as it supports the protocol you are using to retrieve the data.
+
+5. Question: What protocols does cURL support?
+   Answer: cURL supports a wide range of protocols including HTTP, HTTPS, FTP, FTPS, SCP, SFTP, TFTP, DICT, TELNET, LDAP, LDAPS, FILE, POP3, IMAP, SMTP, RTMP and RTSP.
+
+6. Question: Can cURL retrieve results from a website?
+   Answer: Yes, cURL can retrieve results from a website using the HTTP or HTTPS protocol.
+
+7. Question: Is it possible to send data to a server using cURL?
+   Answer: Yes, it is possible to send data to a server using cURL. This is done using the POST, PUT, or DELETE methods.
+
+8. Question: Can cURL be used to download files?
+   Answer: Yes, cURL can be used to download files from a server. This is done using the FTP or SFTP protocol.
+
+9. Question: Can cURL be used to upload files?
+   Answer: Yes, cURL can be used to upload files to a server. This is done using the FTP or SFTP protocol.
+
+10. Question: Can cURL be used in a script?
+    Answer: Yes, cURL can be used in a script to automate the process of sending requests and retrieving results from a server.

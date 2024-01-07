@@ -1,0 +1,57 @@
+1. Question: What are sites in the context of Tapis?
+   Answer: In Tapis, sites refer to physically isolated installations of Tapis software that support geographically distributed deployments. These components are run in different data centers and managed by different institutions. There is a single primary site and zero or more associate sites within a Tapis installation.
+
+2. Question: What is the primary site in a Tapis installation?
+   Answer: The primary site in a Tapis installation runs a complete set of Tapis API services and all associated 3rd-party services, such as databases and message queues. The creation of new sites is coordinated through the primary site, which also maintains the complete registry of all sites and tenants in the installation. The primary site of the main Tapis installation is hosted at the Texas Advanced Computing Center at the tapis.io domain.
+
+3. Question: What are associate sites in Tapis?
+   Answer: Associate sites are required to run the Tapis Security Kernel, a compliant Token Generator API, and one or more additional Tapis services. Each associate site is managed and operated by a separate, partner institution. For Tapis services not run at the associate site, the corresponding service at the primary site is used for requests.
+
+4. Question: How is Tapis deployed?
+   Answer: Tapis is deployed using the Kubernetes container orchestration platform. The project maintains a set of deployment templates which can be used in conjunction with configuration files to deploy Tapis services. Details about the current list of sites is available from the tenants API.
+
+5. Question: What is a tenant in Tapis?
+   Answer: Tapis is a multi-tenant platform, meaning that different projects (or tenants) can have logically isolated views of the Tapis objects they create for their project. Each tenant has a base URL to access the tenant and an authenticator providing the rules for who can authenticate in the tenant. Each tenant is also managed by a site.
+
+6. Question: How does authentication work in Tapis?
+   Answer: The default authenticator provided by the Tapis project is based on OAuth2. OAuth uses different grant type flows for generating tokens in different situations. The two most common use cases for users are generating tokens for themselves using the password grant flow, and generating tokens on behalf of others in a web application using the authorization code grant flow.
+
+7. Question: How can a user generate a Tapis OAuth token for themselves?
+   Answer: A user can generate a Tapis OAuth token for themselves using the password grant flow, providing their username and password. Tapis v3 provides a simplified version of the password grant flow that does not require an OAuth client.
+
+8. Question: What is an access token in Tapis?
+   Answer: An access token in Tapis is a Python string representing a JSON Web Token (JWT). JWTs are cryptographically signed with the private key associated with the tenant, and anyone can validate the signature by using the corresponding public key associated with the tenant.
+
+9. Question: How is an access token used in an API request to Tapis?
+   Answer: To use an access token in an API request to Tapis, the token is passed in as the value of the X-Tapis-Token header. The PySDK will automatically send the token via this header for you.
+
+10. Question: What are the standard claims included in Tapis tokens?
+    Answer: Tapis tokens always include the following standard claims: sub (the subject of the token), exp (the expiry associated with the token), jti (unique identifier for the token), and iss (the identifier of the issuer of the JWT). Additional custom claims specific to Tapis are namespaced with tapis/ at the beginning of the claim name.1. Question: What is an OAuth2 client?
+   Answer: An OAuth2 client represents applications (for example, a web or mobile application) that will interact with the OAuth2 server to generate tokens on behalf of one or more users. Clients are created and managed using the `/v3/oauth2/clients` endpoints.
+
+2. Question: How can I create a client?
+   Answer: To create a client, make a POST request to the Clients API. If you do not pass a `client_id` or `client_key` in the request, the clients API will generate random ones for you.
+
+3. Question: What is the `callback_url`?
+   Answer: The `callback_url` is a parameter that you need to set when registering your client in order to use the `authorize_code` grant type.
+
+4. Question: How can I list clients?
+   Answer: You can list clients using PySDK or CURL. The response will be similar to the one you get when creating a client.
+
+5. Question: How can I delete a client?
+   Answer: You can delete a client by passing the `client_id` of the client to be deleted. A null response is returned from a successful delete request.
+
+6. Question: What is the authorization code grant type?
+   Answer: The authorization code grant type is a feature of OAuth2 that enables applications to generate tokens on behalf of users without the applications needing to possess user credentials.
+
+7. Question: What is the role of the two controllers in the authorization code grant type flow?
+   Answer: The first controller determines if the user already has a valid access token and directs them to the OAuth2 authorization server when they do not. The second controller processes the authorization code returned and retrieves an access token on the user's behalf.
+
+8. Question: What is the final step to using the authorization code grant type?
+   Answer: The final step to using the authorization code grant type is to register a client with a `callback_url` parameter equal to the URL within your web application where it will handle converting authorization codes into access tokens.
+
+9. Question: What is the Tapis Token Web Application?
+   Answer: The Tapis Token Web Application is a graphical interface provided by Tapis that enables users to generate tokens. It serves as an example of an application using the authorization code grant type.
+
+10. Question: Where can I find the source code for the Tapis Token Web Application?
+    Answer: The source code for the Tapis Token Web Application is available at <https://github.com/tapis-project/authenticator>.

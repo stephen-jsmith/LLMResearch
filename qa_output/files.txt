@@ -1,0 +1,141 @@
+1. Question: What operations can users perform through the Files service?
+   Answer: Users can perform file listing, uploading, and various operations such as move, copy, mkdir and delete. They can also transfer files from one Tapis system to another.
+
+2. Question: What types of systems does the Files service support?
+   Answer: The Files service supports systems of type LINUX, S3, IRODS and GLOBUS.
+
+3. Question: Does the functionality of the Files service vary by system type?
+   Answer: Yes, the supported functionality varies by system type.
+
+4. Question: What does Tapis support in terms of file listing?
+   Answer: Tapis supports listing files or objects on a Tapis system. The type for items listed will depend on system type. For example, for LINUX they will be posix files and for S3 they will be storage objects.
+
+5. Question: Are there any special considerations for file listings on S3 type systems?
+   Answer: Yes, objects in an S3 bucket do not have a hierarchical structure. There are no directories. Everything is an object associated with a key. Also, for S3 the recurse flag is ignored and all objects with keys matching the path as a prefix are always included.
+
+6. Question: How are symbolic links handled on Linux systems?
+   Answer: If a listing for a path that is a symbolic link is requested, the symbolic link is followed, and the information is returned for path that the symbolic link points to. If the path doesn't exist, an error will be returned.
+
+7. Question: How can a file or directory be moved or copied using the Files service?
+   Answer: To move or copy a file or directory using the Files service, make a PUT request using the path to the current location of the file or folder.
+
+8. Question: How are symbolic links handled during a move or copy operation?
+   Answer: During a move or copy, if a symbolic link is encountered, it will be handled as per the rules defined in the documentation. The handling varies depending on whether the link is the source or target and if it points to a file or directory.
+
+9. Question: What happens if a symbolic link points to a file and it is the source during a copy operation?
+   Answer: A new symbolic link is created that points to the same place as the source. If the destination path includes directories that do not exist, they will be created.
+
+10. Question: What happens if a symbolic link points to a directory and it is the source during a move operation?
+    Answer: If the destination path is to a directory, the link is moved to that directory. If the link is to a relative path, moving it could change where it actually points because the exact relative path will remain the same.1. Question: How do you create a directory on a Tapis system?
+   Answer: To create a directory on a Tapis system at the given path, issue a mkdir request. This operation is currently supported for LINUX, IRODS and GLOBUS type systems.
+
+2. Question: How do you upload a file on a Tapis system?
+   Answer: To upload a file use a POST request. The file will be placed at the location specified in the path parameter in the request. This operation is not supported for all system types.
+
+3. Question: How do you delete a file or folder on a Tapis system?
+   Answer: To delete a file or folder, issue a DELETE request for the path to be removed. For an S3 system, the path will represent either a single object or all objects in the bucket with a prefix matching the system rootDir if the path is the empty string.
+
+4. Question: How does Tapis handle symbolic links and special files on Linux Systems?
+   Answer: If Tapis encounters a symbolic link during a delete operation, the link will be deleted. The file or directory that the link points to will be unaffected. If the delete encounters a special file, it will not be deleted, and an error will be returned.
+
+5. Question: How do you get Linux stat information on a Tapis system?
+   Answer: Get native stat information for a file or directory for a system of type LINUX.
+
+6. Question: How do you run a Linux native operation on a Tapis system?
+   Answer: Run a native operation on a path. Operations are chmod, chown or chgrp. For a system of type LINUX.
+
+7. Question: How do you get file or directory contents on a Tapis system?
+   Answer: Get file or directory contents as a stream of data. This operation is not supported for all system types.
+
+8. Question: How do you download using ZIP on a Tapis system?
+   Answer: The query parameter zip may be used to request a stream compressed using the ZIP file format. This is not allowed if system rootDir plus path would result in all files on the host being included.
+
+9. Question: How do file transfers work on a Tapis system?
+   Answer: File transfers are used to move data between Tapis systems. They should be used for bulk data operations that are too large for the REST api to perform. Transfers occur asynchronously, and are executed concurrently where possible to increase performance.
+
+10. Question: What are the system types and supported functionality on a Tapis system?
+    Answer: The files included in a transfer will depend on the source system types and the sourceUri values provided in the transfer request. The behavior varies depending on the system types involved in the transfer.1. Question: How can a user transfer data between two systems in Tapis?
+   Answer: The user can initiate a transfer that copies all files and folders from the source system to the destination system. For example, if user `aturing` needs to transfer data from `aturing-storage` to `aturing-compute`, they can do so by specifying the directory of the data to be transferred.
+
+2. Question: Can unauthenticated HTTP/S endpoints be used as a source for a file transfer request?
+   Answer: Yes, unauthenticated HTTP/S endpoints can be used as a source for a file transfer request. This can be useful when the inputs for a job are from a separate web service or stored in a public S3 bucket.
+
+3. Question: How can one retrieve information about a transfer?
+   Answer: To retrieve information about a transfer, including status and bytes transferred, one can make a GET request to the transfers API with the UUID of the transfer.
+
+4. Question: How are symbolic links handled on Linux Systems during a transfer?
+   Answer: During a transfer, symbolic links are always followed. If the source of the transfer is a symbolic link to a file or directory, it transfers the file or directory that is pointed to. If it doesn't exist, it will be an error.
+
+5. Question: What operations are supported for systems of type GLOBUS in Tapis?
+   Answer: For systems of type GLOBUS, the following operations are supported: listing, mkdir, move, delete, and transfer between GLOBUS systems.
+
+6. Question: What is the permissions model in Tapis?
+   Answer: The permissions model in Tapis allows for fine-grained access control of paths on a Tapis system. The system owner may grant READ and MODIFY permission to specific users. MODIFY implies READ.
+
+7. Question: How can one get the Tapis permissions for a user?
+   Answer: To get the Tapis permissions for a user for the system and path, one can make a request to the permissions API. If no user is specified, permissions are retrieved for the user making the request.
+
+8. Question: How can a user grant permissions to another user in Tapis?
+   Answer: A user can grant permissions to another user by specifying the system ID, the path, and the username of the user to whom they wish to grant permissions.
+
+9. Question: How can a user revoke permissions from another user in Tapis?
+   Answer: A user can revoke permissions from another user by issuing a DELETE request on the path and specifying the username of the user from whom they wish to revoke access.
+
+10. Question: What is path sharing in Tapis?
+    Answer: Path sharing in Tapis is a higher level approach to granting access. The sharing API allows a user to share a path with a set of users or publicly with all users in a tenant. Sharing a path grants users READ access to the path or, in the context of running a job, it grants users READ and MODIFY access to the path.1. Q: How do you unshare a path publicly?
+   A: To unshare a path publicly, you need to remove public sharing for a path on a system. The requester must be the owner of the system.
+
+2. Q: How do you remove all shares for a path?
+   A: To remove all shares for a path on a system including public access, you need to remove all shares. If the path is a directory, this will also be done for all sub-paths.
+
+3. Q: What is the PostIts service?
+   A: The PostIts service is a URL service that allows you to create pre-authenticated, disposable URLs to files, directories, buckets, etc in the Tapis Platform's Files service. You have control over the lifetime and number of times the URL can be redeemed, and you can expire a PostIt at any time.
+
+4. Q: How do you create a PostIt?
+   A: To create a PostIt, send a POST request to the Files service's Create PostIt endpoint. The url will contain the systemId and the path that will be shared. The body of the post will contain a json document which describes how long the PostIt is valid, and how many times it can be redeemed.
+
+5. Q: What are the default parameters for creating a PostIt?
+   A: The default parameters for creating a PostIt are allowedUses: 1 (One use) and validSeconds: 2592000 (30 days).
+
+6. Q: What is the maximum value of 'validSeconds' for a PostIt?
+   A: The maximum value of 'validSeconds' for a PostIt is the maximum integer value in Java (Integer.MAX_VALUE = 2147483647).
+
+7. Q: What happens if the owner's permissions change between creating the PostIt and redeeming the PostIt?
+   A: If the owner's permissions change between creating the PostIt and redeeming the PostIt so that the owner is no longer allowed to read the content, redeeming the PostIt will fail.
+
+8. Q: How can you list all PostIts?
+   A: PostIts can be listed by authenticated users. By default a listing of all PostIts owned by the authenticated user will be returned.
+
+9. Q: How can you control which fields are returned when listing PostIts?
+   A: To control which fields are returned, you can supply the select query parameter, and select only certain fields. Setting the select query parameter to id, redeemUrl and expiration would return only those fields.
+
+10. Q: What happens if you set the 'allowedUses' parameter to -1 when creating a PostIt?
+    A: If the 'allowedUses' parameter is set to -1 when creating a PostIt, the PostIt may be redeemed an unlimited number of times.1. Question: How can a single PostIt be retrieved?
+   Answer: A single PostIt can be retrieved by issuing a GET request containing the id of the PostIt. This does not add to the redeem count and can be done by the owner of the PostIt or a tenant admin.
+
+2. Question: Who can retrieve any PostIts in the tenant?
+   Answer: For tenant admins, any PostIts in the tenant can be retrieved.
+
+3. Question: Who can update a PostIt?
+   Answer: The creator of a PostIt and tenant admins can update a PostIt.
+
+4. Question: What happens when updating the validSeconds parameter of a PostIt?
+   Answer: The validSeconds parameter will add to the date and time as of the update request to compute the new expiration. It does not extend the current expiration by that many seconds.
+
+5. Question: How can a PostIt be redeemed?
+   Answer: To redeem a PostIt, use the redeemUrl from the PostIt to make a non-authenticated HTTP GET request.
+
+6. Question: What happens if you specify zip=false for a PostIt that points to a directory?
+   Answer: If you specify zip=false for a PostIt that points to a directory, you will get an error. Directories can't be returned unless they are compressed.
+
+7. Question: How does redeeming PostIts handle symbolic links on Linux Systems?
+   Answer: Redeeming PostIts handles symbolic links exactly the same as Transfers.
+
+8. Question: How can a PostIt be expired?
+   Answer: To expire a PostIt just update it and set validSeconds to 0, or allowedUses to 0.
+
+9. Question: How can a PostIt be deleted?
+   Answer: PostIts can be deleted by specifying the PostIt id in the url. This is a hard delete, and cannot be undone. Only an owner or tenant admin can delete a PostIt.
+
+10. Question: What happens if you need to update the url of a PostIt?
+   Answer: If you need to update the url, you will need to delete or expire this PostIt and create a new one.

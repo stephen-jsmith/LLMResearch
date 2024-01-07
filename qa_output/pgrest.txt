@@ -1,0 +1,141 @@
+1. Question: What are the two primary collections in the PgREST API?
+   Answer: The two primary collections in the PgREST API are the Management API and the Data API.
+
+2. Question: How does PgREST recognize authentication tokens?
+   Answer: PgREST recognizes Tapis v2 and v3 authentication tokens and uses these for determining access levels.
+
+3. Question: What are the five universal roles established by PgREST?
+   Answer: The five universal roles are `PGREST_ADMIN`, `PGREST_ROLE_ADMIN`, `PGREST_WRITE`, `PGREST_READ`, and `PGREST_USER`.
+
+4. Question: What is the function of the `PGREST_USER` role?
+   Answer: The `PGREST_USER` role grants permission to use the `/views` API. Each view has additional permission rules.
+
+5. Question: How are roles granted in PgREST?
+   Answer: Roles are granted at the tenant level, so a user may be authorized at one level in one tenant and at a different level (or not at all) in another tenant.
+
+6. Question: How is table management accomplished in PgREST?
+   Answer: Table management is accomplished with the `/v3/pgrest/manage/tables` endpoint.
+
+7. Question: What is the process of creating a table in PgREST?
+   Answer: Creating a table involves specifying the table name, the columns on the table, including the type of each column, and any additional validation to be performed when storing data in the column, the root URL where the associated collection will be available within the Data API, and, optionally, which HTTP verbs should not be available on the collection.
+
+8. Question: What is a complete list of constraints and properties a table can have in its table definition in PgREST?
+   Answer: A table can have constraints and properties such as `table_name`, `root_url`, `enums`, `comments`, `constraints`, and `columns`.
+
+9. Question: What is the function of the `foreign_key` property in a table definition in PgREST?
+   Answer: The `foreign_key` property specifies whether or not this key should reference a key in another table.
+
+10. Question: What happens when a table is created in PgREST?
+   Answer: When a table is created, endpoints are generated that allow users to interact with the data within a table. These endpoints comprise the Data API.1. Question: How can I list all tables I have access to?
+   Answer: You can list all tables you have access to by making a GET request to `/v3/pgrest/manage/tables`.
+
+2. Question: How can I retrieve a single table by its id?
+   Answer: You can retrieve a single table by its id by making a GET request to `/v3/pgrest/manage/tables/{table_id}`.
+
+3. Question: How can I see the column definitions and validation schema for a particular table?
+   Answer: You can pass `details=true` query parameter to see the column definitions and validation schema for a particular table.
+
+4. Question: Can tenant admins modify tables?
+   Answer: Yes, tenant admins are able to modify tables with a few select operations by making a PUT request to `/v3/pgrest/manage/tables/{table_id}`.
+
+5. Question: What operations are available for tenant admins to modify tables?
+   Answer: Tenant admins can change the root_url, table_name, comments, endpoints, column_type, add a column, drop a column, drop a default, and set a new default on a column in a table.
+
+6. Question: How can I change the table_name of a table?
+   Answer: You can change the table_name of a table by making a PUT request to `/v3/pgrest/manage/tables/{table_id}` with a payload of `{"table_name": "new_table_name"}`.
+
+7. Question: How can I add a column to a table?
+   Answer: You can add a column to a table by making a PUT request to `/v3/pgrest/manage/tables/{table_id}` with a payload of `{"add_column": {"column_name": {"data_type": "data_type", "char_len": length, "comments": "comments"}}`.
+
+8. Question: How can I drop a column in a table?
+   Answer: You can drop a column in a table by making a PUT request to `/v3/pgrest/manage/tables/{table_id}` with a payload of `{"drop_column": "column_name"}`.
+
+9. Question: What is the Data API?
+   Answer: The Data API provides endpoints for managing and retrieving data (rows) stored on tables defined through the Management API.
+
+10. Question: How can I get a specific row in a table?
+    Answer: You can get a specific row in a table by making a GET request to `/v3/pgrest/data/{root_url}/{id}`, where `{root_url}` is the associated attribute on the table and `{id}` is the id of the row.1. Question: How do I create a new row in a table?
+   Answer: You can create a new row by sending a POST request to the `/v3/pgrest/data/{root_url}` URL. The POST message body should be a JSON document providing values for each of the columns inside a single `data` object. The values will first be validated with the json schema generated from the columns data sent in on table creation.
+
+2. Question: Can I create multiple rows at once?
+   Answer: Yes, you can create multiple rows at once by sending POST requests to the `/v3/pgrest/data/{root_url}` URL containing lists of row definitions. The POST message body should be a JSON list containing JSON documents providing values for each of the columns inside a single `data` object.
+
+3. Question: How do I update an existing row in a table?
+   Answer: You can update an existing row by sending a PUT request to the `/v3/pgrest/data/{root_url}/{id}` URL. The request message body should be a JSON document providing the columns to be updated and the new values.
+
+4. Question: Can I update multiple rows at once?
+   Answer: Yes, you can update multiple rows at once using a `where` filter, provided in the PUT request body.
+
+5. Question: What is a `where` stanza in PgREST?
+   Answer: In PgREST, `where` stanzas are used in various endpoints throughout the API to filter the collection of results that an action is applied to. The `where` stanza should be a JSON object with each key being the name of a column on the table and the value under each key being a JSON object with two properties: `operator` and `value`.
+
+6. Question: What operators are recognized by PgREST for use in `where` stanzas?
+   Answer: PgREST recognizes operators such as >, <, =, etc. for use in `where` stanzas.
+
+7. Question: How do I retrieve rows from a table?
+   Answer: To retrieve data from the `/data` API, make an HTTP GET request to the associated URL. An HTTP GET to `/v3/pgrest/data/{root_url}` will retrieve all rows on the associated table, while an HTTP GET to `/v3/pgrest/data/{root_url}/{id}` will retrieve the individual row.
+
+8. Question: Can I retrieve rows with specific search parameters?
+   Answer: Yes, PgREST allows users to retrieve table rows from either the `/data` endpoint or the `/view` endpoint using search parameters follow the Tapis V3 search specification.
+
+9. Question: What are the additional query parameters available in PgREST?
+   Answer: Two additional query parameters are limit and offset. Used like `?limit=20` or/and `?offset=5`. This caps the amount of results you get back or gives you results past a set number, respectively.
+
+10. Question: How do I use operators in an endpoint's query parameters?
+    Answer: These operators are used in an endpoint's query parameters. For example if you had a table with root_url `my_table` and you wanted to get all rows with column `age` greater than `15` you could do the following: `/v3/pgrest/data/my_table?age.gt=15`.1. Question: What is the purpose of Views in the Views Manage API?
+   Answer: Views allow admins to create postgres views to cordone off data from users and give users exactly what they need. These views allow for permission_rules which cross reference a user's roles. If a user has all roles in the permission_rules, they have access to view the view.
+
+2. Question: How can admins create views?
+   Answer: Admins can create views with a post to the `/v3/pgrest/manage/views` endpoint.
+
+3. Question: What are the rules for creating a view definition?
+   Answer: Each view definition can have the following rules: `view_name`, `select_query`, `from_table`, `root_url`, `where_query`, `comments`, `permission_rules`, `raw_sql`, and `materialized_view_raw_sql`. Some of these are required while others are optional or for admins only.
+
+4. Question: What is the purpose of the `raw_sql` rule in view definition?
+   Answer: The `raw_sql` rule allows for better use of postgres's facilities. It is a view creation parameter that can only be used by admins. When using this parameter, `select_query`, `where_query`, and `from_table` are no longer allowed.
+
+5. Question: How can a view be created using the `materialized_view_raw_sql` rule?
+   Answer: The `materialized_view_raw_sql` rule allows for better use of postgres's facilities. It is a view creation parameter that can only be used by admins. When using this parameter, `select_query`, `raw_sql`, `where_query`, and `from_table` are no longer allowed. The query follows `CREATE MATERIALIZED VIEW {tenant}.{view_name} {materialized_view_raw_sql}` format.
+
+6. Question: How can the data of a materialized view be refreshed?
+   Answer: The data for materialized views is updated at creation, and at refreshes. There is no other automatic refreshing of the data.
+
+7. Question: What permissions do users have with views?
+   Answer: Users have no way to change views or to modify anything dealing with them, but they are able to get views that they have sufficient permissions to view.
+
+8. Question: What is the purpose of the PGREST_USER role?
+   Answer: The PGREST_USER role grants no permissions except the permission to call a get on the `/v3/pgrest/views/{view_id}` endpoint. This means that admins can assume PGREST_USER users can only view views in which the user satisfies the permissions declared in a view's `permission_rules`.
+
+9. Question: How can users retrieve table rows using search parameters?
+   Answer: PgREST allows users to retrieve table rows from either the `/data` endpoint or the `/view` endpoint using search parameters that follow the Tapis V3 search specification.
+
+10. Question: What are some examples of operators used in an endpoint's query parameters?
+    Answer: Some examples of operators include `.eq` for equal, `.neq` for not equal, `.lt` for less than, `.lte` for less than or equal, `.gt` for greater than, `.gte` for greater than or equal, `.in` for in set of, `.nin` for not in set of, `.like` for like value, `.nlike` for not like value, `.between` for between set, `.nbetween` for not between set, and `.null` for set to TRUE/FALSE.1. Question: Who can manage roles in the API?
+   Answer: Role management is solely allowed for users in the PGREST_ROLE_ADMIN role, or PGREST_ADMIN.
+
+2. Question: What are the restrictions on modifiable roles?
+   Answer: Modifiable roles all must start with `PGREST_`. Users cannot manage the `PGREST_ADMIN`, `PGREST_ROLE_ADMIN`, `PGREST_WRITE`, or `PGREST_READ` roles.
+
+3. Question: How can a new role be created?
+   Answer: To create a new role users make a post to `/v3/pgrest/roles/` with a body such as: {"role_name": "PGREST_My_New_Role", "description": "A new role!"}
+
+4. Question: What are the required parameters for role creation?
+   Answer: The required parameters for role creation are `role_name` and `description`.
+
+5. Question: How can a role be granted or revoked to a specific user?
+   Answer: To grant or revoke a role to a specific username, users can make a post to `/v3/pgrest/roles/{role_name}` with a body such as: {"method": "grant", "username": "user3234"}
+
+6. Question: What are the required parameters for role management?
+   Answer: The required parameters for role management are `method` and `username`.
+
+7. Question: What is the status of Stored Procedures?
+   Answer: Stored Procedures are coming soon.
+
+8. Question: How can tables be created for the tenant?
+   Answer: Tables can be created for the tenant by making a GET or POST request to /v3/pgrest/manage/tables.
+
+9. Question: How can a specific table be updated or deleted?
+   Answer: A specific table can be updated or deleted by making a PUT or DELETE request to /v3/pgrest/manage/tables/{table_id}.
+
+10. Question: How can roles be created in SK for the tenant?
+    Answer: Roles can be created in SK for the tenant by making a GET or POST request to /v3/pgrest/manage/roles.

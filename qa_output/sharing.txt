@@ -1,0 +1,57 @@
+1. Question: What are the resources defined by Tapis users?
+   Answer: Tapis users define resources such as systems, applications, files, streams, functions, and workflows.
+
+2. Question: What are the two built-in authorization mechanisms provided by Tapis?
+   Answer: Tapis provides two built-in authorization mechanisms: roles and permissions, and Tapis shared resources.
+
+3. Question: What is the role of the Security Kernel (SK) in Tapis?
+   Answer: The Security Kernel (SK) implements a distributed, role-based access control (RBAC) facility in which users are assigned roles that limit or allow access to resources.
+
+4. Question: What is a role in Tapis?
+   Answer: In Tapis, a role is a named entity with an owner. It can contain zero or more other roles and permissions.
+
+5. Question: What are permissions in Tapis?
+   Answer: In Tapis, permissions are case-sensitive strings that follow the format defined by Apache Shiro. They are contained within roles and control access to specific resources.
+
+6. Question: What is the purpose of Tapis shared resources?
+   Answer: Tapis shared resources allow fine-grained authorization to Tapis resources, such as systems or applications. They grant some implicit access to all resources needed to perform an action.
+
+7. Question: What is a runtime context in Tapis sharing?
+   Answer: A runtime context in Tapis sharing is a situation in which limited Tapis authorization is implicitly granted to users performing an action. This context can span multiple services.
+
+8. Question: What is the effect of Tapis sharing on authorizations enforced by external systems?
+   Answer: Tapis sharing has no effect on authorizations enforced by external systems. Access to the path itself is ultimately under the control of the file system on which the path resides.
+
+9. Question: What is the public-grantee access designation in Tapis sharing?
+   Answer: The public-grantee access designation in Tapis sharing allows all users in a tenant access to the shared resource.
+
+10. Question: What is the public-grantee-no-authn access designation in Tapis sharing?
+    Answer: The public-grantee-no-authn access designation in Tapis sharing grants access to all users, even those that have not authenticated with Tapis.1. Question: What is a Shared Application Context (SAC)?
+   Answer: A Shared Application Context (SAC) is a concept that recognizes that applications run in the context of a Tapis job. This context is leveraged by multiple, cooperating services to allow limited implicit access to all the resources needed to run a job.
+
+2. Question: What does 'limited implicit access' mean in the context of a SAC?
+   Answer: 'Limited implicit access' means that for certain resources, the user running the job will have the application owner's authorizations in addition to their own. Users are able to access systems and file paths which they cannot normally access but the application owner can.
+
+3. Question: What are the SAC-aware services?
+   Answer: The SAC-aware services are Systems, Applications, Jobs and Files. These services know when they are running in a SAC and how to alter their behavior.
+
+4. Question: When do SAC-aware services grant implicit access?
+   Answer: SAC-aware services grant implicit access only during Job execution of a shared application. Users are not conferred any special privileges on application-specified resources outside of job execution.
+
+5. Question: Is SSH authentication to a host affected by SAC processing?
+   Answer: No, SSH authentication to a host is not affected by SAC processing. The Tapis system definition still determines the credentials used to login to a host.
+
+6. Question: Is file system and object store authorization affected by SAC processing?
+   Answer: No, file system and object store authorization is not affected by SAC processing. The authenticated user must still be authorized by the persistent storage systems.
+
+7. Question: What are SAC-eligible attributes?
+   Answer: SAC-eligible attributes are attributes of application definitions that implicit access to the resources they designate can be granted to jobs running in a SAC. These include execSystemId, execSystemExecDir, execSystemInputDir, execSystemOutputDir, archiveSystemId, archiveSystemDir, fileInputs sourceUrl, and fileInputs targetPath.
+
+8. Question: What happens if an execution system is specified in a shared application definition?
+   Answer: If an execution system is specified in a shared application definition and that system is not overridden in the job submission request, then jobs running in a SAC will be granted implicit access to the system's definition.
+
+9. Question: What is the purpose of Tapis Sharing?
+   Answer: Tapis Sharing allows a user to share an application with another user and the Tapis file and system resources referenced in the application definition are also implicitly shared. This implicit sharing is implemented by supplementing the requesting user's authorizations with the application owner's authorizations for these resources.
+
+10. Question: Where can I find the sharing APIs for each service?
+    Answer: The sharing APIs for each service can be found in the sharing discussions in each service's documentation.

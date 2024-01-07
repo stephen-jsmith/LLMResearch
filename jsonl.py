@@ -41,21 +41,22 @@ def md_to_jsonl(md_file_dir, jsonl_file):
             clean_section = heading_regex.sub("", clean_section).strip()
 
             # Create a JSON object for this section
-            """section_json = {
-                "filename": md_file_path,
-                "heading": heading.strip("# ").strip(),
-                "text": clean_section,
-                "code": code,
-            }
-            """
             section_json = {
-                "text": f'filename: {md_file_path}, heading: {heading.strip("# ").strip()}, text: {clean_section}, code: {code}'
+                "filename": md_file_path,
+                "prompt": heading.strip("# ").strip(),
+                "completion": clean_section,
+                #"code": code,
             }
+            
+            '''section_json = {
+                "text": f'filename: {md_file_path}, heading: {heading.strip("# ").strip()}, text: {clean_section}, code: {code}'
+            }'''
             # Append to the list if there's meaningful content
-            if section_json["text"] or section_json["code"]:
-                jsonl_data.append(section_json)
+            #if section_json["text"] or section_json["code"]:
+            jsonl_data.append(section_json)
         print(f"Formatted {md_file_path}, contained {count} lines")
-
+    if os.path.exists(jsonl_file_path):
+        os.remove(jsonl_file_path)
     # Write the JSONL data to a file
     with open(jsonl_file_path, "w", encoding="utf-8") as jsonl_file:
         for entry in jsonl_data:

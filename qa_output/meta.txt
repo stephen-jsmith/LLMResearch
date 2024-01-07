@@ -1,0 +1,91 @@
+1. Question: What is Meta V3 and how does it differ from Meta V2?
+   Answer: Meta V3 is built on MongoDB version 4.2 technology and offers full functionality of MongoDB as a document store. It delivers MongoDB as a service so that projects can create metadata and documents that fit their needs. Some advantages over Meta V2 include the ability to use any valid MongoDB document structure, running searches from the API, availability of aggregations, and faster performance. Meta V2, on the other hand, was built on MongoDB version 1.0 technology and had limited search functionality and imposed document structure.
+
+2. Question: How can migration from Meta V2 to V3 be accomplished?
+   Answer: Migration can be accomplished by creating a new database with one or more collections for your project. The tenant administrator can request the initial permissions setup. Once your collection(s) are in place, move the result and associatedIds into your new document model.
+
+3. Question: What is the nature of Meta V3?
+   Answer: Meta V3 is a Stateless Microservice. It allows projects to focus on building frontend applications as most of the server-side logic necessary to manage database operations, authentication/authorization, and related APIs is automatically handled. It also allows for flexible schema, geoJson, and aggregation pipelines to ease the development process.
+
+4. Question: How can a document be created in Meta V3?
+   Answer: To add a json document to a collection, you can use CURL. The response will have an empty response body with a status code of 201 "Created" unless the "basic" url query parameter is set to true. Setting the "basic" parameter to true will give a Tapis Basic response along with the "_id" of the newly created document.
+
+5. Question: How can documents be listed in Meta V3?
+   Answer: You can ask for a default list of documents in MongoDB default sorted order using CURL. The response will be an array of json documents from the collection.
+
+6. Question: How can a specific document be retrieved in Meta V3?
+   Answer: If you know the "_id" of a created document, you can ask for it directly using CURL. The response will be a json document from the collection with the specified "_id".
+
+7. Question: How can a document be found in Meta V3?
+   Answer: You can pass a query parameter named "filter" and set the value to a json MongoDB query document to find a document by a specific "name". The response will be an array of json documents from the collection.
+
+8. Question: What is the Health Check in Meta V3?
+   Answer: The Health Check is an unauthenticated request for the health status of Meta V3 API. It lets any user know the current condition of the service.
+
+9. Question: What are Root resources in Meta V3?
+   Answer: The Root resource space represents the root namespace for databases on the MongoDB host. All databases are located here. Requests to this space are limited to READ only for tenant administrators.
+
+10. Question: What are Database resources in Meta V3?
+    Answer: The Database resource is the top level for many tenant projects. It maps directly to a MongoDB named database in the database server. It allows for listing collection names, getting DB metadata, creating a new named database, and deleting a named database.1. Question: What is the Collection resource used for?
+   Answer: The Collection resource allows requests for managing and querying json documents within a MongoDB collection.
+
+2. Question: How can a new collection of documents be created?
+   Answer: A new collection of documents can be created by specifying a collection name under a specific database.
+
+3. Question: What is the response when a collection is successfully created?
+   Answer: The response is "Status: 201 Collection created. An Etag header value is returned for collection identification".
+
+4. Question: How can the size of a collection be found?
+   Answer: The size or number of documents in a collection can be found by calling "\_size" on a collection.
+
+5. Question: What are Document resources?
+   Answer: Document resources are json documents found in a collection. They can be read, created, deleted, and updated.
+
+6. Question: How can a new document be created within a collection?
+   Answer: A new document can be created within a collection by submitting a json document within the request body of a POST request.
+
+7. Question: What is the response when a document is successfully created?
+   Answer: The response is "Status: 201 Document created".
+
+8. Question: What are Index resources?
+   Answer: Indexes can help speed up queries of your collection and the API gives you the ability to define and manage your indexes.
+
+9. Question: How can a new Index be created?
+   Answer: A new Index can be created by specifying the keys and the index options.
+
+10. Question: What are Aggregation resources?
+    Answer: Aggregations operations process data records and return computed results. They group values from multiple documents together, and can perform a variety of operations on the grouped data to return a single result.Information: 
+
+The Grand Canyon is a steep-sided canyon carved by the Colorado River in Arizona, United States. The Grand Canyon is 277 miles (446 km) long, up to 18 miles (29 km) wide and attains a depth of over a mile (6,093 feet or 1,857 meters). Nearly two billion years of Earth's geological history have been exposed as the Colorado River and its tributaries cut their channels through layer after layer of rock while the Colorado Plateau was uplifted. While the specific geologic processes and timing that formed the Grand Canyon are the subject of debate by geologists, recent evidence suggests that the Colorado River established its course through the canyon at least 17 million years ago. Since that time, the Colorado River continued to erode and form the canyon to its present-day configuration.
+
+Questions & Answers:
+
+1. Q: Where is the Grand Canyon located?
+   A: The Grand Canyon is located in Arizona, United States.
+
+2. Q: What carved the Grand Canyon?
+   A: The Grand Canyon was carved by the Colorado River.
+
+3. Q: How long is the Grand Canyon?
+   A: The Grand Canyon is 277 miles (446 km) long.
+
+4. Q: What is the maximum width of the Grand Canyon?
+   A: The Grand Canyon is up to 18 miles (29 km) wide.
+
+5. Q: How deep is the Grand Canyon?
+   A: The Grand Canyon attains a depth of over a mile (6,093 feet or 1,857 meters).
+
+6. Q: How many years of Earth's geological history have been exposed in the Grand Canyon?
+   A: Nearly two billion years of Earth's geological history have been exposed in the Grand Canyon.
+
+7. Q: What geological feature was uplifted to help form the Grand Canyon?
+   A: The Colorado Plateau was uplifted to help form the Grand Canyon.
+
+8. Q: When did the Colorado River establish its course through the Grand Canyon?
+   A: Recent evidence suggests that the Colorado River established its course through the Grand Canyon at least 17 million years ago.
+
+9. Q: What has the Colorado River been doing since it established its course through the Grand Canyon?
+   A: Since establishing its course, the Colorado River has continued to erode and form the canyon to its present-day configuration.
+
+10. Q: Are the specific geologic processes and timing that formed the Grand Canyon agreed upon by all geologists?
+    A: No, the specific geologic processes and timing that formed the Grand Canyon are the subject of debate by geologists.

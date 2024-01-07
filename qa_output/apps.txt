@@ -1,0 +1,287 @@
+1. Question: What does a Tapis application represent?
+   Answer: A Tapis application represents all the information required to run a Tapis job on a Tapis system and produce useful results. 
+
+2. Question: What is the purpose of an application definition in Tapis?
+   Answer: An application definition includes information which allows the Jobs service to stage input prior to launching the application, launch the application, monitor the application during execution, and archive output after application execution.
+
+3. Question: What are some non-versioned attributes of a Tapis application?
+   Answer: Non-versioned attributes include id, owner, enabled, deleted, created, and updated.
+
+4. Question: What are some versioned attributes of a Tapis application?
+   Answer: Versioned attributes include version, description, runtime, runtimeVersion, runtimeOptions, containerImage, jobType, maxJobs, maxJobsPerUser, strictFileInputs, and job related attributes.
+
+5. Question: What are the required attributes when creating a Tapis application?
+   Answer: The required attributes are id, version, and containerImage. Depending on the type of application and specific values for certain attributes there are other requirements.
+
+6. Question: How is the runtime environment of a Tapis job determined?
+   Answer: The runtime environment of a Tapis job is determined by values in the job submit request, the application definition and the execution system definition.
+
+7. Question: What is the base URL for the TACC tenant?
+   Answer: The base URL for the TACC tenant is `tacc.tapis.io`.
+
+8. Question: How can you create a Tapis application?
+   Answer: You can create a Tapis application by creating a local file named `app_sample.json` with the necessary json, and then using PySDK or CURL to post the application.
+
+9. Question: What happens if `execSystemId` is not specified when creating a Tapis application?
+   Answer: If `execSystemId` is not specified, then it must be provided as part of the job submit request.
+
+10. Question: What is the default job type for a Tapis application?
+    Answer: The default job type for a Tapis application is FORK.1. Question: How can I retrieve details for a specific application?
+   Answer: You can retrieve details for a specific application using PySDK or CURL. For CURL, use the command `$ curl -H "X-Tapis-Token: $JWT" https://tacc.tapis.io/v3/apps/tacc-sample-app-<userid>`.
+
+2. Question: What should the response look like when retrieving details for an application?
+   Answer: The response should include details such as tenant, id, version, description, owner, enabled status, runtime, runtime version, container image, job type, and more.
+
+3. Question: What is the runtime for the sample application?
+   Answer: The runtime for the sample application is DOCKER.
+
+4. Question: What is the job type for the sample application?
+   Answer: The job type for the sample application is FORK.
+
+5. Question: What is the container image for the sample application?
+   Answer: The container image for the sample application is docker.io/hello-world:latest.
+
+6. Question: What are the job attributes for the sample application?
+   Answer: The job attributes for the sample application include description, dynamicExecSystem, execSystemConstraints, execSystemId, execSystemExecDir, execSystemInputDir, execSystemOutputDir, and more.
+
+7. Question: What are the file inputs for the sample application?
+   Answer: The file inputs for the sample application include empty, file1, s3_ceph_file, and s3_aws_test1.
+
+8. Question: What is the node count for the sample application?
+   Answer: The node count for the sample application is 1.
+
+9. Question: What is the memoryMB for the sample application?
+   Answer: The memoryMB for the sample application is 100.
+
+10. Question: When was the sample application created?
+    Answer: The sample application was created on 2021-04-22T21:30:10.590999Z.1. Question: How can I retrieve details for all applications I own?
+   Answer: You can retrieve details for all applications you own using PySDK or CURL. For CURL, use the command `$ curl -H "X-Tapis-Token: $JWT" https://tacc.tapis.io/v3/apps?select=allAttributes`. The response should contain a list of items similar to the single listing shown above.
+
+2. Question: What are the required attributes when creating an application?
+   Answer: When creating an application the required attributes are: *id*, *version* and *containerImage*. Depending on the type of application and specific values for certain attributes there are other requirements.
+
+3. Question: What are the restrictions when creating an application?
+   Answer: If *archiveSystemId* is specified then *archiveSystemDir* is required.
+
+4. Question: How is versioning handled in Tapis?
+   Answer: The versioning scheme is at the discretion of the application author. The combination of `tenant+id+version` uniquely identifies an application in the Tapis environment. It is recommended that a two or three level form of semantic versioning be used.
+
+5. Question: What is a containerized application?
+   Answer: An application that has been containerized is one that can be executed using a single container image. Tapis will use the appropriate container runtime command and provide support for making the input and output directories available to the container when running the container image.
+
+6. Question: What are some examples of variables that may be used when specifying directories for an application?
+   Answer: Some examples of variables that may be used when specifying directories for an application include *JobUUID*, *JobOwner*, *JobWorkingDir*, and *HOST_EVAL(\$\<ENV_VARIABLE\>)*.
+
+7. Question: How does the permissions model work in Tapis?
+   Answer: The permissions model allows for fine grained access control of Tapis applications. At application creation time the owner is given full access to the application. Permissions for other users may be granted and revoked through the applications API.
+
+8. Question: What is sharing in Tapis?
+   Answer: Sharing in Tapis is a higher level approach to granting access. The sharing API allows you to share an application with a set of users as well as share publicly with all users in a tenant. Sharing grants `READ+EXECUTE` access and allows others to run a job using the application.
+
+9. Question: Can an application be deleted in Tapis?
+   Answer: Yes, an application may be deleted and undeleted in Tapis. Deletion means the application is marked as deleted and is no longer available for use. Note that although this is a soft delete the operation is intended for use when an application is to be permanently made unavailable for use.
+
+10. Question: Can I delete a specific version of an application in Tapis?
+    Answer: No, it is not possible to delete a specific version. Deletion applies to all versions of an application.1. Question: What is the attribute "tenant" used for in the application?
+   Answer: The "tenant" attribute is used to define the name of the tenant for which the application is defined.
+
+2. Question: What are the allowed characters for the "id" attribute?
+   Answer: The allowed characters for the "id" attribute are alphanumeric [0-9a-zA-Z] and special characters [-._~].
+
+3. Question: What does the "enabled" attribute indicate?
+   Answer: The "enabled" attribute indicates if the application is currently enabled for use.
+
+4. Question: What are the possible runtimes for the "runtime" attribute?
+   Answer: The possible runtimes for the "runtime" attribute are DOCKER, SINGULARITY, and ZIP.
+
+5. Question: What is the "containerImage" attribute used for?
+   Answer: The "containerImage" attribute is used as a reference for the container image.
+
+6. Question: What are the possible types for the "jobType" attribute?
+   Answer: The possible types for the "jobType" attribute are BATCH and FORK.
+
+7. Question: What does the "maxJobs" attribute represent?
+   Answer: The "maxJobs" attribute represents the maximum number of jobs that can be running for this app on a system.
+
+8. Question: What does the "strictFileInputs" attribute indicate?
+   Answer: The "strictFileInputs" attribute indicates if a job request is allowed to have unnamed file inputs.
+
+9. Question: What is the "notes" attribute used for?
+   Answer: The "notes" attribute is used for simple metadata in the form of a Json object.
+
+10. Question: What does the "created" attribute represent?
+    Answer: The "created" attribute represents when the app was created.1. Question: What is the purpose of the 'description' attribute in the JobAttributes table?
+   Answer: The 'description' attribute is used to provide a description when the application is used to run a job. It can also act as a template to be filled in at job runtime using macros.
+
+2. Question: What does the 'execSystemId' attribute represent?
+   Answer: The 'execSystemId' attribute represents the specific system on which the application is to be run.
+
+3. Question: What is the 'execSystemExecDir' attribute used for?
+   Answer: The 'execSystemExecDir' attribute is used to specify the directory where application assets are staged and the current working directory at application launch time.
+
+4. Question: What is the purpose of the 'execSystemInputDir' attribute?
+   Answer: The 'execSystemInputDir' attribute is used to specify the directory where Tapis is to stage the inputs required by the application.
+
+5. Question: What does the 'execSystemOutputDir' attribute represent?
+   Answer: The 'execSystemOutputDir' attribute represents the directory where Tapis expects the application to store its final output results.
+
+6. Question: What is the 'execSystemLogicalQueue' attribute used for?
+   Answer: The 'execSystemLogicalQueue' attribute is used to specify the LogicalQueue to use when running the job.
+
+7. Question: What does the 'archiveSystemId' attribute represent?
+   Answer: The 'archiveSystemId' attribute represents the system to use when archiving outputs.
+
+8. Question: What is the purpose of the 'archiveSystemDir' attribute?
+   Answer: The 'archiveSystemDir' attribute is used to specify the directory on the archiveSystemId where outputs will be placed.
+
+9. Question: What does the 'archiveOnAppError' attribute indicate?
+   Answer: The 'archiveOnAppError' attribute indicates if outputs should be archived if there is an error while running the job.
+
+10. Question: What is the 'isMpi' attribute used for?
+    Answer: The 'isMpi' attribute is used to indicate that the application is to be executed as an MPI job.1. Q: What are the appArgs in the ParameterSet Attributes Table?
+   A: The appArgs are command line arguments passed to the application.
+
+2. Q: What are the containerArgs in the ParameterSet Attributes Table?
+   A: The containerArgs are command line arguments passed to the container runtime.
+
+3. Q: What are the schedulerOptions in the ParameterSet Attributes Table?
+   A: The schedulerOptions are scheduler options passed to the HPC batch scheduler.
+
+4. Q: What are the envVariables in the ParameterSet Attributes Table?
+   A: The envVariables are environment variables placed into the runtime environment. Each entry has a key (required) and a value (optional) as well as other attributes.
+
+5. Q: What is the archiveFilter in the ParameterSet Attributes Table?
+   A: The archiveFilter sets the files to include or exclude when archiving. The default is to include all files in the execSystemOutputDir.
+
+6. Q: What are the includes in the ArchiveFilter Attributes Table?
+   A: The includes are files to include when archiving after execution of the application. The excludes list has precedence.
+
+7. Q: What are the excludes in the ArchiveFilter Attributes Table?
+   A: The excludes are files to skip when archiving after execution of the application. The excludes list has precedence.
+
+8. Q: What does includeLaunchFiles mean in the ArchiveFilter Attributes Table?
+   A: The includeLaunchFiles indicates if Tapis generated launch scripts are to be included when archiving. The default is TRUE.
+
+9. Q: What is the name attribute in the Arg Attributes Table?
+   A: The name attribute is an identifying label associated with the argument. It is required at creation time.
+
+10. Q: What is the inputMode attribute in the Arg Attributes Table?
+    A: The inputMode attribute indicates how argument is to be treated when processing individual job requests. The modes are REQUIRED, FIXED, INCLUDE_ON_DEMAND, and INCLUDE_BY_DEFAULT. The default is INCLUDE_ON_DEMAND.1. Q: What is the "key" attribute in the KeyValuePair Attributes Table?
+   A: The "key" attribute is an environment variable name and it is required.
+
+2. Q: What is the "value" attribute in the KeyValuePair Attributes Table?
+   A: The "value" attribute is the environment variable value.
+
+3. Q: What is the "description" attribute in the KeyValuePair Attributes Table?
+   A: The "description" attribute provides a description.
+
+4. Q: What is the "inputMode" attribute in the KeyValuePair Attributes Table?
+   A: The "inputMode" attribute indicates how an argument is to be treated when processing individual job requests. It has several modes: REQUIRED, FIXED, INCLUDE_ON_DEMAND, INCLUDE_BY_DEFAULT. The default is INCLUDE_BY_DEFAULT.
+
+5. Q: What is the "notes" attribute in the KeyValuePair Attributes Table?
+   A: The "notes" attribute is simple metadata in the form of a Json object. It is not used by Tapis.
+
+6. Q: What is the "name" attribute in the FileInput Attributes Table?
+   A: The "name" attribute is an identifying label associated with the input. It is typically used during a job request and is required at creation time.
+
+7. Q: What is the "description" attribute in the FileInput Attributes Table?
+   A: The "description" attribute is an optional description.
+
+8. Q: What is the "inputMode" attribute in the FileInput Attributes Table?
+   A: The "inputMode" attribute indicates how input is to be treated when processing individual job requests. It can be REQUIRED, OPTIONAL, or FIXED. The default is OPTIONAL.
+
+9. Q: What is the "autoMountLocal" attribute in the FileInput Attributes Table?
+   A: The "autoMountLocal" attribute indicates if the Jobs service should automatically mount file paths into containers. The default is TRUE.
+
+10. Q: What are the "sourceUrl" and "targetPath" attributes in the FileInput Attributes Table?
+    A: The "sourceUrl" attribute is the source used by Jobs service when staging file inputs. The "targetPath" attribute is the target path used by Jobs service when staging file inputs.1. Q: What is the purpose of the 'name' attribute in the FileInputArray Attributes Table?
+   A: The 'name' attribute is an identifying label associated with the input, typically used during a job request. It is required at creation time.
+
+2. Q: What is the 'description' attribute in the FileInputArray Attributes Table used for?
+   A: The 'description' attribute is used for providing an optional description.
+
+3. Q: What does the 'inputMode' attribute in the FileInputArray Attributes Table indicate?
+   A: The 'inputMode' attribute indicates whether the input is REQUIRED, OPTIONAL, or FIXED. The default is OPTIONAL.
+
+4. Q: What is the purpose of the 'sourceUrls' attribute in the FileInputArray Attributes Table?
+   A: The 'sourceUrls' attribute is an array of sources used by the Jobs service when staging file inputs.
+
+5. Q: What is the 'targetDir' attribute in the FileInputArray Attributes Table used for?
+   A: The 'targetDir' attribute is the target directory used by the Jobs service when staging file inputs.
+
+6. Q: How can users search for applications using the service?
+   A: Users can search for applications based on a list of search conditions provided either as query parameters for a GET call or a list of conditions in a request body for a POST call to a dedicated search endpoint.
+
+7. Q: How can users search for applications using a GET request?
+   A: Users can search for applications using a GET request to the 'apps' endpoint by specifying a list of search conditions using a query parameter named 'search'. Each search condition must be surrounded with parentheses, have three parts separated by the character '.', and be joined using the character '~'.
+
+8. Q: What is the dedicated search endpoint provided by the service?
+   A: The service provides the dedicated search endpoint 'apps/search/apps' for specifying complex queries.
+
+9. Q: How can users search for applications using a GET request on the dedicated search endpoint?
+   A: Users can search for applications using a GET request to the search endpoint by specifying a list of search conditions using a series of query parameters, one for each attribute. All conditions are combined using logical AND.
+
+10. Q: How can users search for applications using a POST request on the dedicated search endpoint?
+    A: Users can search for applications using a POST request to the endpoint 'apps/search/apps' by specifying the search criteria in an SQL-like syntax in the request body. The full query must be in the form of an SQL-like 'WHERE' clause.1. Q: What is the Tapis operator equivalent of the SQL operator "="?
+   A: The Tapis operator equivalent of the SQL operator "=" is "eq".
+
+2. Q: What does the query parameter 'listType' determine?
+   A: The 'listType' query parameter determines whether all resources accessible to the user are included in the results.
+
+3. Q: What are the special select keywords supported when retrieving applications?
+   A: The special select keywords supported are 'allAttributes' and 'summaryAttributes'.
+
+4. Q: How can you specify which fields to be returned when retrieving applications?
+   A: You can specify the fields to be returned by using a query parameter named 'select' and providing a comma-separated list of attribute names.
+
+5. Q: What is the purpose of the 'orderBy' query parameter?
+   A: The 'orderBy' query parameter is used for sorting the results based on the attribute name specified, with an optional sort direction.
+
+6. Q: How can you limit the number of results returned?
+   A: You can limit the number of results returned by using the 'limit' query parameter and specifying the number of items to be returned.
+
+7. Q: What does the 'listType' query parameter do?
+   A: The 'listType' query parameter allows you to see additional resources that are available to you, beyond the ones you own.
+
+8. Q: What information does the metadata object in a Tapis response contain?
+   A: The metadata object contains information related to sorting and limiting, such as record count, record limit, records skipped, orderBy, startAfter, and total count.
+
+9. Q: What is the default value for the 'computeTotal' query parameter?
+   A: The default value for the 'computeTotal' query parameter is false.
+
+10. Q: What is the Tapis operator equivalent of the SQL operator "NOT BETWEEN"?
+    A: The Tapis operator equivalent of the SQL operator "NOT BETWEEN" is "nbetween".Information: 
+
+The Grand Canyon is a steep-sided canyon carved by the Colorado River in Arizona, United States. The Grand Canyon is 277 miles (446 km) long, up to 18 miles (29 km) wide and attains a depth of over a mile (6,093 feet or 1,857 meters). Nearly two billion years of Earth's geological history have been exposed as the Colorado River and its tributaries cut their channels through layer after layer of rock while the Colorado Plateau was uplifted. While the specific geologic processes and timing that formed the Grand Canyon are the subject of debate by geologists, recent evidence suggests that the Colorado River established its course through the canyon at least 17 million years ago. Since that time, the Colorado River continued to erode and form the canyon to its present-day configuration.
+
+Questions & Answers:
+
+1. Q: Where is the Grand Canyon located?
+   A: The Grand Canyon is located in Arizona, United States.
+
+2. Q: What carved the Grand Canyon?
+   A: The Grand Canyon was carved by the Colorado River.
+
+3. Q: How long is the Grand Canyon?
+   A: The Grand Canyon is 277 miles (446 km) long.
+
+4. Q: What is the maximum width of the Grand Canyon?
+   A: The Grand Canyon is up to 18 miles (29 km) wide.
+
+5. Q: How deep is the Grand Canyon?
+   A: The Grand Canyon attains a depth of over a mile (6,093 feet or 1,857 meters).
+
+6. Q: How many years of Earth's geological history have been exposed in the Grand Canyon?
+   A: Nearly two billion years of Earth's geological history have been exposed in the Grand Canyon.
+
+7. Q: What geological event caused the formation of the Grand Canyon?
+   A: The Colorado River and its tributaries cut their channels through layer after layer of rock while the Colorado Plateau was uplifted.
+
+8. Q: When did the Colorado River establish its course through the Grand Canyon?
+   A: Recent evidence suggests that the Colorado River established its course through the canyon at least 17 million years ago.
+
+9. Q: What has the Colorado River been doing since it established its course through the Grand Canyon?
+   A: Since that time, the Colorado River continued to erode and form the canyon to its present-day configuration.
+
+10. Q: Are the specific geologic processes and timing that formed the Grand Canyon agreed upon by all geologists?
+    A: No, the specific geologic processes and timing that formed the Grand Canyon are the subject of debate by geologists.
