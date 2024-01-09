@@ -1,57 +1,9 @@
-1. Q: What is the Pods Service?
-   A: The Pods Service is a web service and distributed computing platform providing pods-as-a-service (PaaS). It implements a message broker and processor model that requests pods, alongside a health module to poll for pod data, including logs, status, and health. It is primarily used to deploy long-lived services based on Docker images that are exposed via HTTP or TCP endpoints listed by the API.
+{"prompt": "What is the Pods Service?", "completion": "The Pods Service is a web service and distributed computing platform providing pods-as-a-service (PaaS). The service implements a message broker and processor model that requests pods, alongside a health module to poll for pod data, including logs, status, and health. The primary use of this service is to have quick to deploy long-lived services based on Docker images that are exposed via HTTP or TCP endpoints listed by the API. The Pods service provides functionality for two types of pod solutions: Templated Pods for run-as-is popular images and Custom Pods for arbitrary docker images with less functionality."}
 
-2. Q: How can I use the Pods Service?
-   A: You can create issues on the Pods Service's GitHub repo and report problems to Christian R. Garcia. The service is available to researchers and students. To learn more about the system, including getting access, follow the instructions in `/getting-started/index`.
+{"prompt": "How do I get started with the Pods Service?", "completion": "This Getting Started guide will walk you through the initial steps of setting up the necessary accounts and installing the required software before moving to the Pods Quickstart, where you will create your first Pods service pod. If you are already using Docker Hub and the TACC TAPIS APIs, feel free to jump right to the Pods Quickstart or check out the Pods Live Docs."}
 
-3. Q: How do I get started with the Pods Service?
-   A: The Getting Started guide will walk you through the initial steps of setting up the necessary accounts and installing the required software before moving to the Pods Quickstart, where you will create your first Pods service pod.
+{"prompt": "How do I create a TACC account to use the Pods Service?", "completion": "The main instance of the Pods platform is hosted at the Texas Advanced Computing Center (TACC). TACC designs and deploys some of the world's most powerful advanced computing technologies and innovative software solutions to enable researchers to answer complex questions. To use the TACC-hosted Pods service, please create a TACC account."}{"prompt": "How do I register a templated Pod using the tapipy library?", "completion": "To register a templated Pod using the tapipy library, you use the `pods.create_pod()` method and pass the arguments describing the pod you want to register through the function parameters. The pod_template should be equal to one of your templated pods."}
 
-4. Q: How do I create a TACC account?
-   A: To use the TACC-hosted Pods service, please create a TACC account at https://portal.tacc.utexas.edu/account-request.
+{"prompt": "How can I access my pod once it is in the `RUNNING` state?", "completion": "Once your pod is in the `RUNNING` state, and after the networking changes proliferate, you should have access to your pod via the internet. You can access your pod through the network using the url provided in the pod's description when creating the pod or when getting the pod description. In the pod response object, the `url` attribute gives you the url your service is being hosted on."}
 
-5. Q: How do I create a Docker account?
-   A: To register pods you will need to publish images on Docker Hub, which requires a Docker account. You can create one at https://hub.docker.com/.
-
-6. Q: How do I install the Tapis Python SDK?
-   A: To interact with the TACC-hosted Abaco platform in Python, you can leverage the Tapis Python SDK, tapipy. To install it, simply run `pip install tapipy`. Note that `tapipy` works with Python 3.
-
-7. Q: How does TACC OAuth work?
-   A: Authentication and authorization to the Tapis APIs uses OAuth2, a web standard. Our implementation of OAuth2 is designed to give you the flexibility you need to script and automate use of Tapis while keeping your access credentials and digital assets secure.
-
-8. Q: How do I create a Tapis Client Object?
-   A: The first step in using the Tapis Python SDK, tapipy, is to create a Tapis Client object. First, import the `Tapis` class and create a python object called `t` that points to the Tapis server using your TACC username and password.
-
-9. Q: How do I generate a Token?
-   A: With the `t` object instantiated, you can exchange your credentials for an access token. In Tapis, you never send your username and password directly to the services; instead, you pass an access token which is cryptographically signed by the OAuth server and includes information about your identity.
-
-10. Q: How do I check access to the Tapis APIs?
-    A: The tapipy `t` object should now be configured to talk to all Tapis APIs on your behalf. You can check that the client is configured properly by making any API call. For example, you can use the authenticator service to retrieve the full TACC profile of your user.1. Question: How do you register a templated Pod?
-   Answer: To register a templated Pod, you use the `Tapis` client object and the `pods.create_pod()` method from the tapipy library. You pass the arguments describing the pod you want to register through the function parameters.
-
-2. Question: What is the pod_template?
-   Answer: The pod_template is a pre-defined template for a pod. In the example, the pod_template used is [template/neo4j]{.title-ref}, which is one of the templated pods.
-
-3. Question: What is the [pod_id]{.title-ref}?
-   Answer: The [pod_id]{.title-ref} is the id used to access the pod at all times. It must be lowercase, alphanumeric, and unique within the tenant.
-
-4. Question: What does a status of `REQUESTED` for a pod mean?
-   Answer: A status of `REQUESTED` for a pod means that the Pods service has sent a message requesting the pod described to the backend [spawner]{.title-ref} infrastructure. The pod's image must be pulled, a pod service must be created for networking, and the networking changes must propagate to the Pod's proxy before the Pod is ready for use.
-
-5. Question: How can you check the details of your pods?
-   Answer: You can check the details of your pods, including its status, by using the `t.pods.create_pod()` method.
-
-6. Question: How do you access a Pod?
-   Answer: Once your pod is in the `RUNNING` state, and after the networking changes proliferate, you can access your pod via the internet. You can use the url provided in the pod's description when creating the pod or when getting the pod description.
-
-7. Question: How do you retrieve the logs from a pod?
-   Answer: The Pods service collects the latest 10 MB of logs from the pod when running and makes them available via the `logs` endpoint. You can retrieve the logs from the pod by using the `get_pod_logs()` method, passing in `pod_id`.
-
-8. Question: What can you do after creating, registering, and accessing your first pod?
-   Answer: After creating, registering, and accessing your first pod, you can learn more about the additional capabilities of the Pods service by continuing on to the Technical Guide.
-
-9. Question: What should you do if only quickstart is currently complete?
-   Answer: If only quickstart is currently complete, you can view the API Reference to see what additional functionality is currently available.
-
-10. Question: What is the API Reference?
-    Answer: The API Reference is a live-documentation that takes the OpenAPI v3 specification that is automatically generated and gives users the public endpoints available within the Pods API along with request body expected and descriptions for each field.
+{"prompt": "How can I retrieve the logs from my pod?", "completion": "The Pods service collects the latest 10 MB of logs from the pod when running and makes them available via the `logs` endpoint. To retrieve the logs from the pod, you use the `get_pod_logs()` method, passing in `pod_id`."}

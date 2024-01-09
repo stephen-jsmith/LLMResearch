@@ -1,404 +1,49 @@
-1. Question: What is the Tapis v3 Jobs service specialized to do?
-   Answer: The Tapis v3 Jobs service is specialized to run containerized applications on any host that supports container runtimes.
+{"prompt": "What types of containers does the Tapis v3 Jobs service support?", "completion": "The Tapis v3 Jobs service supports Docker and Singularity containers."}
+{"prompt": "What are the steps taken when a job request is received by the Tapis v3 Jobs service?", "completion": "When a job request is received, the following steps are taken: 1. Request authorization - The tenant, owner, and user values from the request and Tapis JWT are used to authorize access to the application, execution system and, if specified, archive system. 2. Request validation - Request values are checked for missing, conflicting or improper values; all paths are assigned; required paths are created on the execution system; and macro substitution is performed to finalize all job parameters. 3. Job creation - A Tapis job object is written to the database. 4. Job queuing - The Tapis job is queue on an internal queue serviced by one or more Job Worker processes. 5. Response - The initial Job object is sent back to the caller in the response. This ends the synchronous portion of job submission."}
+{"prompt": "What is the status of the 'Submit' method in the Beta release of Jobs?", "completion": "The 'Submit' method in the Beta release of Jobs is implemented."}{"prompt": "What are the required parameters for a job submission request?", "completion": "A job submission request must contain the 'name', 'appId' and 'appVersion' values. These are required parameters for a job submission request."}
 
-2. Question: Which container runtimes are currently supported by the Tapis v3 Jobs service?
-   Answer: Currently, Docker and Singularity containers are supported.
+{"prompt": "What is the default value for the 'archiveOnAppError' parameter in a job submission request?", "completion": "The default value for the 'archiveOnAppError' parameter in a job submission request is 'true'."}
 
-3. Question: What services does the Jobs service use to process jobs?
-   Answer: The Jobs service uses the Systems, Apps, Files and Security Kernel services to process jobs.
+{"prompt": "How is the 'jobType' parameter determined in a job request?", "completion": "The 'jobType' parameter is determined as follows: 1. If the user specifies jobType in the job request, it is used. 2. Otherwise, if the app.jobType != null, it is used. 3. Otherwise, the execution system is queried and jobType=BATCH if execSys.canRunBatch==true. 4. Otherwise, jobType is set to FORK."}{"prompt": "What are the default directory assignments in a Tapis system?", "completion": "The default directory assignments in a Tapis system are: rootDir - the root of the file system that is accessible through this Tapis system, jobWorkingDir - the default directory for temporary files used or created during job execution, and dtnMountPoint - the path relative to the execution system's rootDir where the DTN file system is mounted."}
 
-4. Question: What is the current state of the Beta release of Jobs?
-   Answer: The Beta release of Jobs has implemented various features such as Submit, Resubmit, List, Search, Get, Get Status, Get History, Get Output list, Download Output, Resubmit Request, Cancel, Hide, Unhide, SendEvent, Post Share, Get Share, Delete Share, Health Check, Ready, and Hello.
+{"prompt": "How are the execution and archive system directories assigned during a job request submission?", "completion": "When a job request is submitted, each of the job's four execution and archive system directories are assigned as follows: 1. If the job submission request assigns the directory, that value is used. Otherwise, 2. If the application definition assigns the directory, that value is used. Otherwise, 3. The default values are assigned."}
 
-5. Question: What happens when a job request is received?
-   Answer: When a job request is received, it goes through several steps including request authorization, request validation, job creation, job queuing, and response.
+{"prompt": "What are the rules governing how job inputs are calculated in Tapis?", "completion": "The rules governing how job inputs are calculated in Tapis are: 1. The effective inputs to a job are the combined inputs from the application and job request. 2. Only named inputs are allowed in application definitions. 3. Application defined inputs are either REQUIRED, OPTIONAL or FIXED. 4. Applications can restrict the number and definitions of inputs (strictFileInputs=true). 5. Anonymous (unnamed) inputs can be specified in the job request unless prohibited by the application definition (strictFileInputs=true). 6. Job request inputs override values set in the application except for FIXED inputs. 7. The tapislocal URL scheme specifies in-place inputs for which transfers are not performed."}{"prompt": "What is the purpose of the 'tapislocal' URL scheme in Tapis?", "completion": "The 'tapislocal' URL scheme is introduced by Tapis and is only recognized by the Applications and Jobs services. It is used to indicate that a filepath already exists on the execution system and, therefore, does not require data transfer during job execution. It is commonly used for large data sets that cannot reasonably be copied to be mounted directly onto execution systems."}
 
-6. Question: What is the role of the Job Worker processes?
-   Answer: Job Worker processes read jobs from their work queues and shepherd a job through its lifecycle until the job completes, fails or becomes blocked due to a transient resource constraint.
+{"prompt": "What is the 'fileInputArrays' parameter and how is it used in Tapis?", "completion": "The 'fileInputArrays' parameter provides an alternative syntax for specifying inputs in Applications and job requests. It is convenient for specifying multiple inputs destined for the same target directory, an I/O pattern sometimes referred to as 'scatter-gather'. It is an array of JobFileInputArray objects, each of which contains an array of 'sourceUrls' and a single 'targetDir'. However, 'tapislocal' URLs cannot appear in 'sourceUrls' fields."}
 
-7. Question: What happens after a response to the submission request is sent to the caller?
-   Answer: After a response to the submission request is sent to the caller, job processing proceeds asynchronously.
+{"prompt": "What is the 'parameterSet' argument in a Tapis job and what does it consist of?", "completion": "The job 'parameterSet' argument in Tapis is comprised of several objects including 'appArgs', 'containerArgs', 'schedulerOptions', 'envVariables', 'archiveFilter', and 'logConfig'. These objects can be specified in Tapis application definitions and/or in job submission requests. They are used to pass arguments to the user's application, container runtime, HPC batch scheduler, inject environment variables into the application container, select file archiving, and redirect stdout and stderr respectively."}{"prompt": "How do I specify command line arguments for the user application?", "completion": "You can specify one or more command line arguments for the user application using the *appArgs* parameter. Arguments specified in the application definition are appended to those in the submission request."}
+{"prompt": "How can I specify key/value pairs that will be injected as environment variables into the application's container?", "completion": "You can specify key/value pairs that will be injected as environment variables into the application's container when it's launched using the *envVariables* parameter. Key/value pairs specified in the execution system definition, application definition, and job submission request are aggregated using precedence ordering (system < app < request) to resolve conflicts."}
+{"prompt": "How can I use the *archiveFilter* to specify which files should be archived?", "completion": "An *archiveFilter* can be specified in the application definition and/or the job submission request. The *includes* and *excludes* arrays are merged by appending entries from the application definition to those in the submission request. The *excludes* filter is applied first, so it takes precedence over *includes*. If *excludes* is empty, then no output file or directory will be explicitly excluded from archiving. If *includes* is empty, then all files in *execSystemOutputDir* will be archived unless explicitly excluded. If *includes* is not empty, then only files and directories that match an entry and not explicitly excluded will be archived."}{"prompt": "How can users subscribe to job execution events?", "completion": "Users can subscribe to job execution events through the application definition and job request. These subscriptions are merged to produce a job's initial subscription list. New subscriptions can be added while a job is running, but not after the job has terminated. A job's subscriptions can be listed and deleted. Only job owners or tenant administrators can subscribe to a job. The 'ttlminutes' parameter can specify up to 4 weeks. If the parameter is not specified or if it's set to 0, a default value of 1 week is used."}
 
-8. Question: What is the job lifecycle?
-   Answer: The job lifecycle includes stages such as input staging to execution system, application artifact staging to execution system, job queuing or invoking on execution system, job monitoring until it terminates, job exit code collection, and job output archiving.
+{"prompt": "What are the event types to which users can subscribe?", "completion": "Users can subscribe to the following event types: JOB_NEW_STATUS, JOB_INPUT_TRANSACTION_ID, JOB_ARCHIVE_TRANSACTION_ID, JOB_SUBSCRIPTION, JOB_SHARE_EVENT, JOB_ERROR_MESSAGE, JOB_USER_EVENT, and ALL. All event types other than JOB_USER_EVENT are generated by Tapis. A JOB_USER_EVENT contains a user-specified payload that can be sent to an active job using the job's UUID."}
 
-9. Question: What are the steps taken when a job request is received?
-   Answer: The steps taken when a job request is received include request authorization, request validation, job creation, job queuing, and response.
+{"prompt": "How are job arguments calculated?", "completion": "Job arguments are calculated based on several rules. All argument in application definitions must be named. Application arguments are either REQUIRED, FIXED or one of two optional types. Anonymous (unnamed) argument can be specified in job requests. Job request argument override values set in the application except for FIXED arguments. The final argument ordering is the same as the order specified in the definitions, with application arguments preceding those from the job request. Application arguments maintain their place even when overridden in the job request. The notes field can be any JSON object."}{"prompt": "What is the JSON schema for defining key/value pairs of strings in various ParameterSet components?", "completion": "The JSON schema for defining key/value pairs of strings in various ParameterSet components is as follows: \n\n\"KeyValuePair\": {\n    \"$comment\": \"A simple key/value pair\",\n    \"type\": \"object\",\n        \"properties\": {\n            \"key\":   {\"type\": \"string\", \"minLength\": 1},\n            \"value\": {\"type\": \"string\", \"minLength\": 0},\n            \"description\": {\"type\": \"string\", \"minLength\": 1, \"maxLength\": 2048}\n        },\n     \"required\": [\"key\", \"value\"],\n     \"additionalProperties\": false\n}\n\nBoth the *key* and *value* are required, though the *value* can be an empty string. Descriptions are optional."}
 
-10. Question: What happens during the request validation step?
-   Answer: During the request validation step, request values are checked for missing, conflicting or improper values; all paths are assigned; required paths are created on the execution system; and macro substitution is performed to finalize all job parameters.1. Question: What does the simplest job submission request look like?
-   Answer: The simplest job submission request is a POST payload that includes the name, appId, and appVersion. For example:
+{"prompt": "How does the logConfig JSON schema work?", "completion": "The logConfig JSON schema is used to redirect stdout and stderr to named file(s) in supported runtimes. The schema is as follows: \n\n\"logConfig\": {\n    \"$comment\": \"Log file redirection and customization in supported runtimes\",\n    \"type\": \"object\",\n    \"required\": [ \"stdoutFilename\", \"stderrFilename\" ],\n    \"additionalProperties\": false,\n        \"properties\": {\n            \"stdoutFilename\": {\"type\": \"string\", \"minLength\": 1},\n            \"stderrFilename\": {\"type\": \"string\", \"minLength\": 1}\n        }\n}\n\nCurrently, only the Singularity (Apptainer) runtime is supported. When specified, both file name fields must be explicitly assigned, though they can be assigned to the same file. If a logConfig object is not specified, or in runtimes where it's not supported, then both stdout and stderr are directed to the default tapisjob.out file in the job's output directory. Output files, even when logConfig is used, are always relative to the ExecSystemOuputDir."}
 
-    {
-     "name": "myJob"
-     "appId": "myApp"
-     "appVersion": "1.0"
-    }
+{"prompt": "What are the standard environment variables passed into each application container run by Tapis?", "completion": "The following standard environment variables are passed into each application container run by Tapis as long as they have been assigned a value: \n\n_tapisAppId - Tapis app ID\n_tapisAppVersion - Tapis app version\n_tapisArchiveOnAppError - true means archive even if the app returns a non-zero exit code\n_tapisArchiveSystemDir - the archive system directory on which app output is archived\n_tapisArchiveSystemId - Tapis system used for archiving app output\n_tapisCoresPerNode - number of cores used per node by app\n_tapisDtnMountPoint - the mountpoint on the execution system for the source DTN directory\n_tapisDtnMountSourcePath - the directory exported by the DTN and mounted on the execution system\n_tapisDtnSystemId - the Data Transfer Node system ID\n_tapisDynamicExecSystem - true if dynamic system selection was used\n_tapisEffeciveUserId - the user ID under which the app runs\n_tapisExecSystemExecDir - the exec system directory where app artifacts are staged\n_tapisExecSystemHPCQueue - the actual batch queue name on an HPC host\n_tapisExecSystemId - the Tapis system where the app runs\n_tapisExecSystemInputDir - the exec system directory where input files are staged\n_tapisExecSystemLogicalQueue - the Tapis queue definition that specifies an HPC queue\n_tapisExecSystemOutputDir - the exec system directory where the app writes its output\n_tapisJobCreateDate - ISO 8601 date, example: 2021-04-26Z\n_tapisJobCreateTime - ISO 8601 time, example: 18:44:55.544145884Z\n_tapisJobCreateTimestamp - ISO 8601 timestamp, example: 2021-04-26T18:44:55.544145884Z\n_tapisJobName - the user-chosen name of the Tapis job\n_tapisJobOwner - the Tapis job's owner\n_tapisJobUUID - the UUID of the Tapis job\n_tapisJobWorkingDir - exec system directory that the app should use for temporary files\n_tapisMaxMinutes - the maximum number of minutes allowed for the job to run\n_tapisMemoryMB - the memory required per node by the app\n_tapisNodes - the number of nodes on which the app runs\n_tapisSysBatchScheduler - the HPC scheduler on the execution system\n_tapisSysBucketName - an object store bucket name\n_tapisSysHost - the IP address or DNS name of the exec system\n_tapisSysRootDir - the root directory on the exec system\n_tapisTenant - the tenant in which the job runs."}{"prompt": "What is the function of the HOST_EVAL macro in Tapis?", "completion": "The HOST_EVAL macro function in Tapis is used in directory assignments in systems, applications and job requests. It dynamically extracts the value of a named environment variable from an execution or archive host at the time the job request is made. The environment variable's value is retrieved by logging into the host as the Job owner and issuing \"echo $var\". An optional default value can be passed into the HOST_EVAL function for increased application portability. If the environment variable does not exist on the host, then the literal path parameter is returned by the function."}
 
-2. Question: What are the required values in a job submission request?
-   Answer: A job submission request must contain the name, appId, and appVersion values.
+{"prompt": "What are the possible states of a Tapis job?", "completion": "A Tapis job can be in one of the following states: PENDING, PROCESSING_INPUTS, STAGING_INPUTS, STAGING_JOB, SUBMITTING_JOB, QUEUED, RUNNING, ARCHIVING, BLOCKED, PAUSED, FINISHED, CANCELLED, and FAILED. The initial state is PENDING and the terminal states are FINISHED, CANCELLED and FAILED. The BLOCKED state indicates that the job is recovering from a resource constraint, network problem or other transient problem. When the problem clears, the job will restart from the state in which blocking occurred."}
 
-3. Question: What is the default for the archive system in a job submission request?
-   Answer: The default for the archive system is for it to be the same as the execution system.
+{"prompt": "What information is included in the notification messages sent by the Jobs service in Tapis?", "completion": "The notification messages sent by the Jobs service in Tapis include a JSON object in the data field that always contains the following fields: jobName, jobOwner, jobUuid, and message. Depending on the Job event type, additional fields may be included. For example, JOB_NEW_STATUS includes newJobStatus and oldJobStatus, JOB_INPUT_TRANSACTION_ID includes transferStatus and transactionId, and JOB_ERROR_MESSAGE includes jobStatus. If the JOB_NEW_STATUS messages indicate a terminal newJobStatus, or JOB_ERROR_MESSAGE messages have eventDetail = \"FINAL_MESSAGE\", additional fields such as blockedCount, remoteJobId, remoteJobId2, remoteOutcome, remoteResultInfo, remoteQueue, remoteSubmitted, remoteStarted, and remoteEnded are included."}{"prompt": "How does the Tapis v3 Jobs service support Docker and Singularity containers?", "completion": "The Tapis v3 Jobs service supports Docker and Singularity containers by running them natively, without the use of a batch scheduler like Slurm. Jobs launches an application's container on a remote system, monitors the container's execution, and captures the application's exit code after it terminates. Jobs uses SSH to connect to the execution system to issue Docker, Singularity or native operating system commands. To launch a job, the Jobs service creates a bash script, tapisjob.sh, with the runtime-specific commands needed to execute the container."}
 
-4. Question: What is the purpose of the "name" parameter in a job submission request?
-   Answer: The "name" parameter is the user-chosen name of the job.
+{"prompt": "How does the Tapis v3 Jobs service launch a Docker container?", "completion": "To launch a Docker container, the Jobs service will SSH to the target host and issue a command using this template: docker run [docker options] image[:tag|@digest] [application args]. The docker options, image, and application arguments are specified by the user. The container name is set to the job UUID, the container's user is set to the user ID used to establish the SSH session, the container ID file is specified as <JobUUID>.cid in the execSystemExecDir, and the container is removed after execution using the -rm option or by calling docker rm."}
 
-5. Question: What does the "appId" parameter represent in a job submission request?
-   Answer: The "appId" parameter represents the Tapis application to execute.
+{"prompt": "What are the two ways Tapis provides to launch a Singularity container?", "completion": "Tapis provides two distinct ways to launch a Singularity containers, using singluarity instance start or singularity run. For instance start, the Jobs service will SSH to the target host and issue a command using a specific template. For singularity run, the Jobs service will SSH to the target host and issue a command using a different template. In both cases, the singularity options, image id, and application arguments are specified by the user."}{"prompt": "What are the requirements for using Singularity start and Singularity run approaches?", "completion": "Singularity start requires the startscript to be defined in the image. Singularity run requires the runscript to be defined in the image. Both approaches allow SSH sessions between Jobs and execution hosts to end without interrupting container execution."}
+{"prompt": "What is the recommended termination order for the initially launched program?", "completion": "The initially launched program should be the last part of the application to terminate. It can spawn any number of processes (and threads), but it should not exit before those processes complete."}
+{"prompt": "How can I get the details of a specific job?", "completion": "You can get the details of a specific job using PySDK or CURL. The response will include details like job id, name, owner, tenant, status, creation and end time, and other specific details related to the job."}{"prompt": "How can I check the status of a job using PySDK or CURL?", "completion": "You can check the status of a job using PySDK or CURL by sending a request to the Job Status API. The response will contain a 'status' field which will indicate the current status of the job. For example, a 'FINISHED' status means that the job has completed successfully."}
 
-6. Question: What is the "jobType" parameter in a job submission request?
-   Answer: The "jobType" parameter can be either FORK or BATCH, indicating the type of job.
+{"prompt": "How can I retrieve the history of a job using PySDK or CURL?", "completion": "You can retrieve the history of a job using PySDK or CURL by sending a request to the Job History API. The response will contain a list of events that occurred during the job's lifecycle, including the time each event occurred, the new status of the job after each event, and a description of each event."}
 
-7. Question: What is the default value for the "dynamicExecSystem" parameter in a job submission request?
-   Answer: The default value for the "dynamicExecSystem" parameter is false.
+{"prompt": "How can I get a list of output files from a job using PySDK or CURL?", "completion": "You can get a list of output files from a job using PySDK or CURL by sending a request to the Job Output Listing API. The response will contain a list of files that were output by the job, including information about each file such as its name, path, size, and last modified time. By default, the job must be in a terminal state (FINISHED or FAILED or CANCELLED) for the API to list the job's output files. However, you can set the 'allowIfRunning' query parameter to true to get the list of output files even if the job is not in a terminal state."}{"prompt": "How can I download the output files of a job using the Jobs API?", "completion": "The Jobs output download API retrieves the job's output files for a previously submitted job by its UUID. By default, the job must be in a terminal state (FINISHED or FAILED or CANCELLED) for the API to download the job's output files. There is a query parameter allowIfRunning set to false by default. If allowIfRunning=true, the API allows downloading the job output files even if the job is not in the terminal state. Note that if a file is being written at the time of the request, the file is still downloaded with the current content."}
 
-8. Question: What does the "nodeCount" parameter represent in a job submission request?
-   Answer: The "nodeCount" parameter represents the number of nodes required for application execution. The default is 1.
+{"prompt": "How can I search for jobs using the dedicated search endpoint in the jobs service?", "completion": "The jobs service provides dedicated search end-points to query jobs based on different conditions. The GET end-point allows to specify the query in the query parameters while the POST end-point allows complex queries in the request body using SQL-like syntax."}
 
-9. Question: What is the "isMpi" parameter in a job submission request?
-   Answer: The "isMpi" parameter indicates whether this job is an MPI job. The default is false.
+{"prompt": "How can I cancel a job that has been previously submitted and is not in a terminal state?", "completion": "A previously submitted job not in terminal state can be cancelled by its UUID. The response will indicate that the request to cancel the job has been accepted. If the job is in a terminal state, the request will have no effect. If the job is transitioning between active and blocked states, another cancel request may need to be sent."}{"prompt": "How can I share a job with another user in the same tenant?", "completion": "A previously submitted job can be shared with a user in the same tenant. The job resources that can be shared are: JOB_HISTORY, JOB_RESUBMIT_REQUEST, JOB_OUTPUT. Currently only READ permission on the resources are allowed."}
+{"prompt": "How can I retrieve information about a shared job?", "completion": "You can retrieve information about a shared job using PySDK or CURL. The response will include details such as the tenant, who created the job, the job UUID, the grantee, the job resource, the job permission, and when it was created."}
+{"prompt": "How can I unshare a job that I previously shared?", "completion": "You can unshare a previously shared job using PySDK or CURL. The response will confirm that the job resource has been unshared."}{"prompt": "How can I share job output with another user in the same tenant?", "completion": "You can share job output with another user, for example 'testuser5', in the same tenant. This will allow 'testuser5' to list and download the job output using their own JWT, even if they are not the owner of the job."}
 
-10. Question: How is the final value assigned to the jobType of a job calculated?
-    Answer: The final value assigned to the jobType of a job is calculated as follows:
+{"prompt": "What actions can a user perform on a shared job output?", "completion": "A user with whom a job output has been shared can perform actions such as listing the job output and downloading the job output. They can do this using their own JWT, even if they are not the owner of the job."}
 
-    1. If the user specifies jobType in the job request, use it.
-    2. Otherwise, if the app.jobType != null, use it.
-    3. Otherwise, query the execution system and set jobType=BATCH if execSys.canRunBatch==true.
-    4. Otherwise, set jobType=FORK.1. Question: What are the directories calculated before the submission response is sent?
-   Answer: The execution and archive system directories are calculated before the submission response is sent.
-
-2. Question: What are the directories assigned when a system is defined?
-   Answer: The directories assigned when a system is defined are rootDir, jobWorkingDir, and dtnMountPoint.
-
-3. Question: What is a Data Transfer Node (DTN)?
-   Answer: A Data Transfer Node (DTN) is a high throughput node used to stage job inputs and to archive job outputs. The goal is to improve transfer performance.
-
-4. Question: What are the directories assigned in application definitions and/or in a job submission requests?
-   Answer: The directories assigned in application definitions and/or in a job submission requests are execSystemExecDir, execSystemInputDir, execSystemOutputDir, and archiveSystemDir.
-
-5. Question: How are the job's four execution and archive system directories assigned?
-   Answer: The job's four execution and archive system directories are assigned based on the job submission request, the application definition, or the default values.
-
-6. Question: What are the rules that govern how job inputs are calculated?
-   Answer: The rules that govern how job inputs are calculated include the effective inputs to a job are the combined inputs from the application and job request, only named inputs are allowed in application definitions, application defined inputs are either REQUIRED, OPTIONAL or FIXED, and others.
-
-7. Question: What is the JobFileInput?
-   Answer: The JobFileInput is used to specify file inputs on Jobs submission requests. It contains properties like name, description, autoMountLocal, sourceUrl, targetPath, and notes.
-
-8. Question: What happens when a match is found between the name field in JobFileInput and an input in the application definition?
-   Answer: When a match is found, values from the AppFileInput are merged into unassigned fields in the JobFileInput.
-
-9. Question: What is the sourceUrl in a JobFileInput object?
-   Answer: The sourceUrl is the location from which data are copied to the targetPath. Any URL protocol accepted by the Tapis Files service can be used in a sourceUrl.
-
-10. Question: What is a complete JobFileInput object?
-    Answer: A JobFileInput object is complete when its sourceUrl and targetPath are assigned. This provides the minimal information needed to effect a transfer.1. Question: What is the purpose of In-Place Inputs (tapislocal)?
-   Answer: In-Place Inputs (tapislocal) is a feature that allows job inputs already present on an execution system to be declared without needing to be transferred. This is useful for large data sets that cannot reasonably be copied and are instead mounted directly onto execution systems.
-
-2. Question: What is the function of the tapislocal URL scheme?
-   Answer: The tapislocal URL scheme is recognized by the Applications and Jobs services and indicates that a filepath already exists on the execution system, therefore, it does not require data transfer during job execution.
-
-3. Question: What happens if the targetPath is "*" in the tapislocal scheme?
-   Answer: If the targetPath is "*", the Jobs service will assign the target path inside the container to be the last segment of the tapislocal URL path.
-
-4. Question: What is the purpose of the autoMountLocal parameter?
-   Answer: The autoMountLocal parameter, which is true by default, causes Jobs to automatically mount the filepath into containers. Setting autoMountLocal to false allows the user complete control over mounting using a containerArgs parameter.
-
-5. Question: What is the fileInputArrays parameter used for?
-   Answer: The fileInputArrays parameter provides an alternative syntax for specifying inputs in Applications and job requests. This syntax is convenient for specifying multiple inputs destined for the same target directory, a pattern sometimes referred to as scatter-gather.
-
-6. Question: What is a restriction of the fileInputArrays parameter?
-   Answer: One restriction of the fileInputArrays parameter is that tapislocal URLs cannot appear in sourceUrls fields.
-
-7. Question: What happens when names match in the fileInputArrays parameter?
-   Answer: When names match in the fileInputArrays parameter, the sourceUrls defined in a job request override (i.e., completely replace) those defined in an application.
-
-8. Question: What is the targetDir in the fileInputArrays parameter?
-   Answer: The targetDir is the directory into which all sourceUrls are copied. It is always rooted at the ExecSystemInputDir.
-
-9. Question: What is the purpose of the parameterSet argument in a job?
-   Answer: The parameterSet argument in a job is comprised of various objects that can be specified in Tapis application definitions and/or in job submission requests. These include arguments passed to the user's application, container runtime, and HPC batch scheduler, environment variables, file archiving selector, and user-specified stdout and stderr redirection.
-
-10. Question: Can the execution system specify environment variable settings?
-    Answer: Yes, in addition to Tapis application definitions and job submission requests, the execution system can also specify environment variable settings.1. Question: What is the function of the appArgs parameter?
-   Answer: The appArgs parameter is used to specify one or more command line arguments for the user application. Arguments specified in the application definition are appended to those in the submission request.
-
-2. Question: How does the containerArgs parameter work?
-   Answer: The containerArgs parameter is used to specify one or more command line arguments for the container runtime. Arguments specified in the application definition are appended to those in the submission request.
-
-3. Question: What is the purpose of the schedulerOptions parameter?
-   Answer: The schedulerOptions parameter is used to specify HPC batch scheduler arguments for the container runtime. Arguments specified in the application definition are appended to those in the submission request. The arguments for each scheduler are passed using that scheduler's conventions.
-
-4. Question: What is the function of the envVariables parameter?
-   Answer: The envVariables parameter is used to specify key/value pairs that will be injected as environment variables into the application's container when it's launched. Key/value pairs specified in the execution system definition, application definition, and job submission request are aggregated using precedence ordering to resolve conflicts.
-
-5. Question: What is the archiveFilter parameter?
-   Answer: The archiveFilter parameter conforms to a JSON schema and can be specified in the application definition and/or the job submission request. It is used to filter which files and directories are archived after a job is run.
-
-6. Question: What is the logConfig Spec parameter?
-   Answer: The logConfig Spec parameter can be supplied in the job submission request and/or in the application definition. It can be used to redirect the application container's stdout and stderr to user-specified files.
-
-7. Question: What is the function of the mpiCmd parameter?
-   Answer: The mpiCmd parameter lets users set the MPI launch command in a system definition, application definition and/or job submission request. It is used to kick off parallel execution of programs that have been configured or compiled with the proper MPI libraries.
-
-8. Question: What is the isMpi parameter?
-   Answer: The isMpi parameter is specified in an application definition and/or job request to toggle MPI launching on or off. This switch allows the same system to run both MPI and non-MPI jobs depending on the needs of particular jobs or applications.
-
-9. Question: What is the cmdPrefix parameter?
-   Answer: The cmdPrefix parameter provides generalized support for launchers and is available in application definitions and job submission requests. A cmdPrefix value is simply prepended to a program's pathname and arguments.
-
-10. Question: Are the mpiCmd and cmdPrefix parameters mutually exclusive?
-    Answer: Yes, the mpiCmd and cmdPrefix parameters are mutually exclusive. If isMpi is true, then cmdPrefix must not be set.1. Question: What is the status of ExecSystemConstraints?
-   Answer: ExecSystemConstraints is not implemented yet.
-
-2. Question: Can users subscribe to job execution events?
-   Answer: Yes, users can subscribe to job execution events. Subscriptions specified in the application definition and those specified in the job request are merged to produce a job's initial subscription list.
-
-3. Question: Can new subscriptions be added while a job is running?
-   Answer: Yes, new subscriptions can be added while a job is running, but not after the job has terminated.
-
-4. Question: Who can subscribe to a job?
-   Answer: Only job owners or tenant administrators can subscribe to a job.
-
-5. Question: What is the maximum time that can be specified for the ttlminutes parameter when creating a subscription?
-   Answer: When creating a subscription the ttlminutes parameter can specify up to 4 weeks.
-
-6. Question: What happens if the ttlminutes parameter is not specified or if it's set to 0?
-   Answer: If the ttlminutes parameter is not specified or if it's set to 0, a default value of 1 week is used.
-
-7. Question: What are the supported delivery methods for notifications?
-   Answer: Currently, only email and webhook delivery methods are supported for notifications.
-
-8. Question: What is a complete AppArgSpec?
-   Answer: A complete AppArgSpec is one that has a non-empty name and arg value.
-
-9. Question: What is a complete JobArgSpec?
-   Answer: A complete JobArgSpec is one that has a non-empty arg value.
-
-10. Question: What happens when the AppArgSpec's inputMode is FIXED?
-    Answer: When the AppArgSpec's inputMode is FIXED, the argument is completely defined in the application and not overridable in a job request.1. Question: What is the JSON schema for defining key/value pairs of strings in various components?
-   Answer: The JSON schema for defining key/value pairs of strings in various components is an object type with properties "key", "value", and "description". Both "key" and "value" are required, with "value" being allowed to be an empty string. Descriptions are optional.
-
-2. Question: What is the JSON schema used to redirect stdout and stderr to named file(s) in supported runtimes?
-   Answer: The JSON schema used to redirect stdout and stderr to named file(s) in supported runtimes is an object type with properties "stdoutFilename" and "stderrFilename". Both file name fields must be explicitly assigned, though they can be assigned to the same file.
-
-3. Question: Which runtime is currently supported for log file redirection and customization?
-   Answer: Currently, only the Singularity (Apptainer) runtime is supported for log file redirection and customization.
-
-4. Question: What happens if a logConfig object is not specified, or in runtimes where it's not supported?
-   Answer: If a logConfig object is not specified, or in runtimes where it's not supported, then both stdout and stderr are directed to the default tapisjob.out file in the job's output directory.
-
-5. Question: What are some of the standard environment variables passed into each application container run by Tapis?
-   Answer: Some of the standard environment variables passed into each application container run by Tapis include _tapisAppId, _tapisAppVersion, _tapisArchiveOnAppError, _tapisArchiveSystemDir, _tapisArchiveSystemId, _tapisCoresPerNode, and _tapisDtnMountPoint, among others.
-
-6. Question: What is macro substitution in Tapis?
-   Answer: Macro substitution in Tapis is the act of replacing a macro or template variable with actual values at well-defined points during job creation. Macros that have values assigned are passed as environment variables into application containers.
-
-7. Question: What is the difference between ground and derived macro definitions in Tapis?
-   Answer: Most macro definitions in Tapis are ground definitions because their values do not depend on any other macros. On the other hand, derived macro definitions can include other macro definitions.
-
-8. Question: What happens if a derived macro references a macro that follows it in the derived list?
-   Answer: If a derived macro references a macro that follows it in the derived list, the result is undefined.
-
-9. Question: What is the notation used to reference macro values in Tapis?
-   Answer: Macro values in Tapis are referenced using the ${Macro-name} notation.
-
-10. Question: Is macro substitution applied to the job description field in Tapis?
-    Answer: Yes, macro substitution is applied to the job description field, whether the description is specified in an application or a submission request.1. Question: What is the function of HOST_EVAL in Macro Functions?
-   Answer: The HOST_EVAL function in Macro Functions is used at the beginning of directory assignments in systems, applications, and job requests. It dynamically extracts the named environment variable's value from an execution or archive host at the time the job request is made.
-
-2. Question: What happens if the environment variable VAR does not exist on the host in Macro Functions?
-   Answer: If the environment variable VAR does not exist on the host, then the literal path parameter is returned by the HOST_EVAL function. If the environment variable does not exist and no optional path parameter is provided, the job fails due to invalid input.
-
-3. Question: What are the possible states of a Tapis job?
-   Answer: The possible states of a Tapis job are PENDING, PROCESSING_INPUTS, STAGING_INPUTS, STAGING_JOB, SUBMITTING_JOB, QUEUED, RUNNING, ARCHIVING, BLOCKED, PAUSED, FINISHED, CANCELLED, and FAILED.
-
-4. Question: What is the initial state of a Tapis job?
-   Answer: The initial state of a Tapis job is PENDING.
-
-5. Question: What are the terminal states of a Tapis job?
-   Answer: The terminal states of a Tapis job are FINISHED, CANCELLED, and FAILED.
-
-6. Question: What is the function of Notifications in Tapis?
-   Answer: Notifications are the messages sent to subscribers who have registered interest in certain job events. They contain a JSON object that includes fields such as jobName, jobOwner, jobUuid, and message.
-
-7. Question: What is the status of Dynamic Execution System Selection in Tapis?
-   Answer: Dynamic Execution System Selection in Tapis is not implemented yet.
-
-8. Question: What is a Data Transfer Node (DTN) in Tapis?
-   Answer: A Data Transfer Node (DTN) in Tapis is a system that can be designated as part of its definition. When an execution system specifies DTN usage in its definition, then the Jobs service will use the DTN to stage input files and archive output files.
-
-9. Question: What is the function of dtnMountSourcePath and dtnMountPoint in the execution system?
-   Answer: The dtnMountSourcePath is the Tapis URL specifying the exported DTN path, relative to the DTN system's rootDir. The dtnMountPoint is the path relative to the execution system's rootDir where the DtnMountSourcePath is mounted.
-
-10. Question: What happens when a job request is issued in Tapis?
-    Answer: When a job request is issued in Tapis, the Jobs service stages the application's input files using the DTN. The transfer request to the Files service writes to a target URL. After inputs are staged, the Job service injects environment variable values into the launched job's container.1. Question: What container runtimes does the Tapis v3 Jobs service currently support?
-   Answer: The Tapis v3 Jobs service currently supports Docker and Singularity containers run natively.
-
-2. Question: How does the Jobs service launch a job?
-   Answer: The Jobs service creates a bash script, tapisjob.sh, with the runtime-specific commands needed to execute the container. This script references tapisjob.env, a file Jobs creates to pass environment variables to application containers.
-
-3. Question: How does the Jobs service launch a Docker container?
-   Answer: The Jobs service will SSH to the target host and issue a command using a specific template. The container name is set to the job UUID, the container's user is set to the user ID used to establish the SSH session, and the container is removed after execution.
-
-4. Question: What should be considered when defining Tapis applications to run under Docker in terms of logging?
-   Answer: Since Jobs removes Docker containers after they execute, the container's log is lost under the default Docker logging configuration. An application can maintain control over its log output by logging to a file outside of the container or by redirecting stdout and stderr.
-
-5. Question: How are bind mounts used in the execution system's standard Tapis directories?
-   Answer: Bind mounts are used to mount the execution system's standard Tapis directories at the same locations in every application container.
-
-6. Question: How does Tapis launch a Singularity container?
-   Answer: Tapis provides two distinct ways to launch a Singularity containers, using singluarity instance start or singularity run.
-
-7. Question: How does the Jobs service launch a Singularity container using the start command?
-   Answer: The Jobs service will SSH to the target host and issue a command using a specific template. Jobs will then issue singularity instance list to obtain the container's process id (PID) and determines that the application has terminated when the PID is no longer in use by the operating system.
-
-8. Question: What happens after a Singularity container terminates?
-   Answer: Jobs will look for a tapisjob.exitcode file in the Job's output directory after containers terminate. If found, the file should contain only the integer code the application reported when it exited. If not found, Jobs assumes the application exited normally with a zero exit code.
-
-9. Question: How does the Jobs service launch a Singularity container using the run command?
-   Answer: The Jobs service will SSH to the target host and issue a command using a specific template. Jobs will use the PID returned when issuing the background command to monitor the container's execution and determines that the application has terminated when the PID is no longer in use by the operating system.
-
-10. Question: How does Jobs attain the application's exit code?
-    Answer: Jobs uses the TapisJob.exitcode file convention to attain the application's exit code. If the file exists, it should contain only the integer code the application reported when it exited. If not found, Jobs assumes the application exited normally with a zero exit code.1. Question: What are the requirements for the Singularity Start and Singularity Run approaches?
-   Answer: Both approaches allow SSH sessions between Jobs and execution hosts to end without interrupting container execution. However, they require the application image to be appropriately constructed. Singularity start requires the startscript to be defined in the image, and Singularity run requires the runscript to be defined in the image.
-
-2. Question: What is the required termination order for Jobs?
-   Answer: The initially launched program should be the last part of the application to terminate. The program specified in the image script can spawn any number of processes, but it should not exit before those processes complete.
-
-3. Question: Is it mandatory for applications to support the TapisJob.exitcode file convention?
-   Answer: No, it is not mandatory. However, it is the only way in which Jobs can report the application specified exit status to the user.
-
-4. Question: How can I get a list of Jobs?
-   Answer: You can get a list of Jobs using PySDK or CURL. The response will include details such as the job's UUID, name, owner, appId, creation date, status, and more.
-
-5. Question: What information is provided in the Jobs list?
-   Answer: The Jobs list provides information such as the job's UUID, name, owner, appId, creation date, status, execution system ID, archive system ID, app version, and last updated date.
-
-6. Question: How can I get details of a specific Job?
-   Answer: You can get details of a specific Job using PySDK or CURL. The response will include detailed information about the job.
-
-7. Question: What information is provided in the Job Details?
-   Answer: The Job Details provide comprehensive information about the job, including its ID, name, owner, tenant, description, status, creation date, end date, UUID, app ID, app version, execution system ID, archive system ID, and more.
-
-8. Question: What is the status of the job with the UUID "731b65f4-43e9-4a7a-b3a0-68644b53c1cb-007"?
-   Answer: The status of the job with the UUID "731b65f4-43e9-4a7a-b3a0-68644b53c1cb-007" is "FINISHED".
-
-9. Question: What is the app version of the job with the UUID "79dfaba5-bfb4-4c6d-a198-643bda211dbf-007"?
-   Answer: The app version of the job with the UUID "79dfaba5-bfb4-4c6d-a198-643bda211dbf-007" is "0.0.1".
-
-10. Question: What is the execution system ID of the job with the ID 1711?
-    Answer: The execution system ID of the job with the ID 1711 is "tapisv3-exec2".1. Question: What is the status of the job?
-   Answer: The status of the job is "FINISHED".
-
-2. Question: What is the message received when the job status is retrieved?
-   Answer: The message received is "JOBS_STATUS_RETRIEVED Status of the Job ba34f946-8a18-44c4-9b25-19e21dfadf69-007 retrieved."
-
-3. Question: What is the version of the job status retrieval?
-   Answer: The version is "1.0.0-rc1".
-
-4. Question: What is the final status of the job according to the job history?
-   Answer: According to the job history, the final status of the job is "FINISHED".
-
-5. Question: How many events are recorded in the job history?
-   Answer: There are 9 events recorded in the job history.
-
-6. Question: What is the message received when the job history is retrieved?
-   Answer: The message received is "JOBS_HISTORY_RETRIEVED Job ba34f946-8a18-44c4-9b25-19e21dfadf69-007 history retrieved for user testuser2 tenant dev".
-
-7. Question: How many output files are listed for the job?
-   Answer: There are 5 output files listed for the job.
-
-8. Question: What is the message received when the job output files list is retrieved?
-   Answer: The message received is "JOBS_OUTPUT_FILES_LIST_RETRIEVED Job ba34f946-8a18-44c4-9b25-19e21dfadf69-007 output files list retrieved for the user testuser2 in the tenant dev."
-
-9. Question: What is the size of the file "tapisjob.sh" in the job output files list?
-   Answer: The size of the file "tapisjob.sh" is 979.
-
-10. Question: Can the job's output files list be retrieved if the job is not in a terminal state?
-    Answer: By default, the job must be in a terminal state for the API to list the job's output files. However, if the query parameter allowIfRunning is set to true, the API returns the job output files list even if the job is not in the terminal state.1. Question: What happens when you download job output?
-   Answer: All the files in the requested outputPath get downloaded in a zip file. The Jobs output download API retrieves the job's output files for a previously submitted job by its UUID. 
-
-2. Question: What is the default state for a job to download its output files?
-   Answer: By default, the job must be in a terminal state (FINISHED or FAILED or CANCELLED) for the API to download the job's output files.
-
-3. Question: What does the query parameter 'allowIfRunning' do?
-   Answer: The query parameter 'allowIfRunning' is set to false by default. If 'allowIfRunning=true', the API allows downloading the job output files even if the job is not in the terminal state.
-
-4. Question: What is the purpose of the dedicated search endpoint in the jobs service?
-   Answer: The jobs service provides dedicated search end-points to query jobs based on different conditions. The GET end-point allows to specify the query in the query parameters while the POST end-point allows complex queries in the request body using SQL-like syntax.
-
-5. Question: How can a user make complex queries to the Jobs service?
-   Answer: A user can make complex queries to Jobs service by specifying SQL-like syntax in the request body to the end-point /v3/jobs/search.
-
-6. Question: What happens when a job is cancelled?
-   Answer: A previously submitted job not in terminal state can be cancelled by its UUID. The response will indicate that the request to cancel the job has been accepted.
-
-7. Question: What does the 'Hide Job' function do?
-   Answer: The 'Hide Job' function changes the visibility of the job to hidden. The response will indicate that the job has been changed to hidden.
-
-8. Question: What does the 'Unhide Job' function do?
-   Answer: The 'Unhide Job' function changes the visibility of the job to unhidden. The response will indicate that the job has been changed to unhidden.
-
-9. Question: What is the response when a search is made using GET on the dedicated endpoint?
-   Answer: The response will include a list of jobs that match the search criteria, along with details such as the job's UUID, name, owner, appId, status, and more.
-
-10. Question: What is the response when a search is made using POST on the dedicated endpoint?
-    Answer: The response will include a list of jobs that match the complex query specified in the request body, along with details such as the job's name, status, appId, tags, and UUID.1. Question: What is job sharing?
-   Answer: Job sharing is a feature that allows a previously submitted job to be shared with a user in the same tenant. The job resources that can be shared include JOB_HISTORY, JOB_RESUBMIT_REQUEST, and JOB_OUTPUT. Currently, only READ permission on the resources are allowed.
-
-2. Question: What does the response look like when a job is shared?
-   Answer: The response will include a message indicating that the job resource has been shared by one user to another in a specific tenant. The status will be "success" and the version will be "1.2.1".
-
-3. Question: How can I get information about a shared job?
-   Answer: You can get job share information using PySDK or CURL. The response will include details such as the tenant, the user who created the job, the job UUID, the grantee, the job resource, the job permission, and the date the job was created.
-
-4. Question: How can I unshare a job?
-   Answer: You can unshare a job using PySDK or CURL. The response will include a message indicating that the job resource has been unshared by one user to another in a specific tenant. The status will be "success" and the version will be "1.2.1".
-
-5. Question: How can I list all shared jobs for a user?
-   Answer: You can list all shared jobs for a user by using the query parameter listType=SHARED_JOBS in the jobs list end-point. The response will include a list of jobs shared with the user.
-
-6. Question: What does the response look like when listing shared jobs?
-   Answer: The response will include a list of jobs with details such as the job UUID, name, owner, appId, created date, status, tenant, execSystemId, archiveSystemId, appVersion, and last updated date. The status will be "success" and the version will be "1.2.1".
-
-7. Question: How can I perform a job search on a list of shared jobs?
-   Answer: You can perform a job search on a list of shared jobs using the query parameter listType=SHARED_JOBS in the search end-point. The response will include a list of jobs shared with the user.
-
-8. Question: What does the response look like when searching for shared jobs?
-   Answer: The response will include a list of jobs with details such as the job UUID, name, owner, appId, created date, status, tenant, execSystemId, archiveSystemId, appVersion, and last updated date. The status will be "success" and the version will be "1.2.1".
-
-9. Question: What permissions are allowed on shared job resources?
-   Answer: Currently, only READ permission is allowed on shared job resources.
-
-10. Question: What job resources can be shared?
-    Answer: The job resources that can be shared include JOB_HISTORY, JOB_RESUBMIT_REQUEST, and JOB_OUTPUT.1. Question: What is the job output resource that can be shared?
-   Answer: The job output resource that can be shared includes job output listing and job output download.
-
-2. Question: Who can the job output resource be shared with?
-   Answer: The job output resource can be shared with a user, for example, testuser5, in the same tenant.
-
-3. Question: What can testuser5 do with the shared job output resource?
-   Answer: Testuser5 can do job output listing and job output download with its own JWT.
-
-4. Question: Does testuser5 need to be the owner of the job to access the job output resource?
-   Answer: No, testuser5 does not need to be the owner of the job to access the job output resource.
-
-5. Question: What is the job history that can be shared?
-   Answer: The job history that can be shared includes job's history, status, and job's detail information.
-
-6. Question: Who can the job history be shared with?
-   Answer: The job history can be shared with a user, for example, testuser5, in the same tenant.
-
-7. Question: What can testuser5 do with the shared job history?
-   Answer: Testuser5 can get job's history, status, and job's detail information for jobs that are shared with it using its own JWT.
-
-8. Question: Does testuser5 need to be the owner of the job to access the job history?
-   Answer: No, testuser5 does not need to be the owner of the job to access the job history.
-
-9. Question: What is JWT in this context?
-   Answer: In this context, JWT refers to JSON Web Token, which is a standard for securely transmitting information between parties as a JSON object.
-
-10. Question: Can the job output resource and job history be shared with users in different tenants?
-    Answer: The information provided does not specify whether the job output resource and job history can be shared with users in different tenants. It only mentions sharing within the same tenant.
+{"prompt": "Can a user access the history of a job that has been shared with them?", "completion": "Yes, a user with whom a job has been shared can access the job's history, status, and detailed information. They can do this using their own JWT."}

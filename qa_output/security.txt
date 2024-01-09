@@ -1,57 +1,9 @@
-1. Question: What is the Security Kernel (SK) microservice?
-   Answer: The Security Kernel (SK) microservice provides role-based authorization and secrets management for Tapis. It uses a PostgreSQL database to store its authorization data and the open source version of HashiCorp Vault as its secrets backend.
+{"prompt": "What is the role of the Security Kernel in Tapis?", "completion": "The Security Kernel (SK) microservice in Tapis provides role-based authorization and secrets management. It uses a PostgreSQL database to store its authorization data and the open source version of HashiCorp Vault as its secrets backend. Authentication is based on JSON Web Tokens (JWTs) managed by the Authentication subsystem."}
 
-2. Question: How does SK handle authentication?
-   Answer: SK handles authentication based on JSON Web Tokens (JWTs) managed by the Authentication subsystem.
+{"prompt": "How does the Security Kernel handle role-based authorization?", "completion": "The Security Kernel's role-based authorization is based on an extended version of the Apache Shiro authorization model, which defines both roles and permissions. Each role has a unique name and is assigned an owner. SK provides a set of role endpoints to create, update, query and delete roles. It also provides user endpoints to grant users roles, revoke roles from users, and query the roles assigned to a user."}
 
-3. Question: What is the basis of SK's authorization?
-   Answer: SK's authorization is based on an extended version of the Apache Shiro authorization model, which defines both roles and permissions.
+{"prompt": "What is the concept of Hierarchical Roles in the Security Kernel?", "completion": "In the Security Kernel, roles can be arranged in directed acyclic graphs (DAGs) based on parent/child relationships. This allows SK users to define roles with fine granularity and then compose them in flexible ways. For example, a parent role 'DirA_Owner' could have 'DirA_Reader' and 'DirA_Writer' as child roles. Users assigned 'DirA_Owner' would implicitly also be assigned 'DirA_Reader' and 'DirA_Writer'."}{"prompt": "What is the purpose of the SK's typed secrets model?", "completion": "The typed secrets model of SK overlays Vault's native capabilities. It requires users to provide a secretType and secretName on most of its calls. Using this information, SK calculates the virtual paths in Vault being referenced. This means users do not need to understand Vault's naming scheme and SK has complete control of where secrets reside inside of Vault."}
 
-4. Question: How does SK manage roles?
-   Answer: In a tenant, each role has a unique name and is assigned an owner. SK provides a set of role endpoints to create, update, query and delete roles. It also provides user endpoints to grant users roles, revoke roles from users, and query the roles assigned to a user.
+{"prompt": "What types of secrets are supported by SK?", "completion": "SK supports several types of secrets. These include Service Password, JWT Signing Key, DB Credentials, System Credentials, and User secrets. However, only the User secret type can be used by Tapis users; the rest are reserved for Tapis services only."}
 
-5. Question: What are built-in roles in SK?
-   Answer: Each tenant has at least one tenant administrator, which is a user assigned a distinguished, tightly controlled role. Each user is implicitly given a default role. These roles have names that begin with "$$" and end with the user's ID.
-
-6. Question: What is the unique feature of SK's implementation of role-based authorization?
-   Answer: One unique feature of SK's implementation of role-based authorization is that roles can be arranged in directed acyclic graphs (DAGs) based on parent/child relationships. This allows SK users to define roles with fine granularity and then compose them in flexible ways.
-
-7. Question: How does SK handle permissions?
-   Answer: In addition to checking whether a user has been granted a certain role, SK authorization can also be based on permissions. SK roles can contain zero or more permission strings. The syntax and semantics of these permissions are explained in the Shiro documentation.
-
-8. Question: What are extended permissions in SK?
-   Answer: SK implements the full Shiro permission model and extends it to accommodate hierarchical resources such as file systems. For certain registered permission schemas, the last component of a specification can be treated as an extended path attribute.
-
-9. Question: How does SK use extended attribute permissions?
-   Answer: SK's extended attribute permissions are used to maintain authorization to hierarchical resources outside of those resources. This is useful when a single service account is used to access data on a system for multiple actual Tapis users.
-
-10. Question: What is the downside of SK's approach to role-based authorizations?
-    Answer: A possible downside of SK's approach is the extra network cost incurred on Tapis calls that authorize users. However, so far this overhead has had minimal impact.1. Question: What does SK use as its backend database for storing and managing secrets?
-   Answer: SK uses HashiCorp Vault as its backend database for storing and managing secrets.
-
-2. Question: How does SK allow access to Vault?
-   Answer: There is no direct access to Vault for users or services. All access comes through SK.
-
-3. Question: What are the capabilities of Vault's version 2 Key/Value secrets engine that SK reflects in its API?
-   Answer: SK allows secrets to be created, read, versioned, deleted and destroyed.
-
-4. Question: What is the basic idea of SK's typed secrets model?
-   Answer: The basic idea is that SK requires users to provide a secretType and secretName on most of its calls. Using this information, SK calculates the virtual paths in Vault being referenced.
-
-5. Question: What are the secret types supported by SK?
-   Answer: The secret types supported by SK are Service Password, JWT Signing Key, DB Credentials, System Credentials, and User.
-
-6. Question: Which secret type can be used by Tapis users?
-   Answer: Only the User secret type can be used by Tapis users.
-
-7. Question: Who are the rest of the secret types reserved for?
-   Answer: The rest of the secret types are reserved for Tapis services only.
-
-8. Question: How many secrets can be referenced by each secretType/secretName combination in SK?
-   Answer: Currently, SK only allows a single secret to be referenced by each secretType/secretName combination.
-
-9. Question: What is the purpose of SK's typed secrets model?
-   Answer: The purpose of SK's typed secrets model is to overlay Vault's native capabilities and to have complete control of where secrets reside inside of Vault.
-
-10. Question: Do users need to understand Vault's naming scheme in SK?
-    Answer: No, users do not need to understand Vault's naming scheme as SK calculates the virtual paths in Vault being referenced.
+{"prompt": "How does SK manage access to Vault?", "completion": "SK uses HashiCorp Vault as its backend database for storing and managing secrets. There is no direct access to Vault for users or services. All access comes through SK, which allows secrets to be created, read, versioned, deleted and destroyed by reflecting in its API the capabilities of Vault's version 2 Key/Value secrets engine."}

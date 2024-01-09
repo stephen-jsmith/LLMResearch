@@ -6,6 +6,8 @@ import pandas as pd
 import pickle
 import json
 from pathlib import Path
+from tqdm import tqdm
+from time import sleep
 
 COMPLETIONS_MODEL = "text-davinci-003"
 EMBEDDING_MODEL = "text-embedding-ada-002"
@@ -41,16 +43,44 @@ def gpt4(question, tokens=500):
             text_parts.append(line)
 
     # Print the text parts
-    for line in text_parts:
-        print(line)
+    '''for line in text_parts:
+        print(line)'''
 
     # Print a separator
-    print("\n" + "-" * 50 + "\n")
+    '''print("\n" + "-" * 50 + "\n")'''
 
     # Print the code parts
     for line in code_parts:
         print(line)
     return content
+
+
+p1 = "Consider the following information provided: "
+p2 = """Based solely on the data presented, create a list of 3 most common and not trivial Questions and Answers. This is used to fine-tune LLMs to answer technical user support tickets
+
+Ensure each question:
+1. Is directly related to the content given.
+2. Can be answered with the information from the provided text only.
+3. Questions must be technical and focused on questions a HPC user will ask for technical support. 
+
+Avoid:
+- Generating questions on general topics or external knowledge not contained in the text.
+- Creating any questions if the information provided does not sufficiently cover 3 distinct points.
+- Limit to fewer than 3 Q&A generation if the content is limited. 
+- Do not overlap Q&A.
+
+Output should be structured only as JSONL format. When not able to generate do not generate anything:
+{"prompt": <Question>, "completion": <answer>}
+
+If the content is not comprehensive enough to form 3 distinct questions and answers, state that insufficient data is provided.
+
+Example context:{"filename": "actor.md", "prompt": "Install the Tapis Python SDK", "completion": "To interact with the TACC-hosted Abaco platform in Python, we will\nleverage the Tapis Python SDK, tapipy. To install it, simply run: pip3 install tapipy\n\n\n\n::: attention\n::: title\nAttention\n:::\n\n`tapipy` works with Python 3.\n:::"}
+
+Example output: {"prompt": "How do I install the Tapis Python SDK to use with the Abaco platform?", "completion": "To install the Tapis Python SDK, simply run the the command `pip3 install tapipy` in the Python environment."}
+
+
+Context:
+<<<Insert context here>>>"""
 
 
 # Generate the Question
@@ -61,6 +91,8 @@ for json_str in temp:
     result = json.loads(json_str)
     content.append(result)
 
+
+jsonl_data = []
 for file in os.listdir("md_files"):
     p_list = []
     p_holder = []
@@ -73,10 +105,24 @@ for file in os.listdir("md_files"):
     p_list.append("\n".join(p_holder))
 
     results = []
+    count = 1
     for p_context in p_list:
-        prompt = f""" Consider the following information. From it, devise a list of 10 Questions and Answers, based solely on the data presented: {p_context}"""
+        print(f'Running batch {count} of {len(p_list) + 1} for {file}')
+        prompt = f'{p1} {p_context}. \n {p2}'
+
         results.append(gpt4(prompt, 2000))
+
+        count += 1
+        print('Allowing rate limit to reset, wait one minute please...')
+        for i in tqdm(range(20)):
+            sleep(3)
 
     with open(os.path.join("qa_output", str(Path(file).stem) + ".txt"), "w") as f:
         for i in results:
             f.write(i)
+            jsonl_data.append(i)
+
+
+with open('jsonl_files/qa_output.jsonl', 'w') as f:
+    for i in jsonl_data:
+        f.write(i)

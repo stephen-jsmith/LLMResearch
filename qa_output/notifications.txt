@@ -1,85 +1,9 @@
-1. Question: What does a notification event represent in Tapis?
-   Answer: In Tapis, a notification event represents an occurrence that may be of interest to other parties. 
+{"prompt": "What information does an event in Tapis contain?", "completion": "An event in Tapis contains the following information: source, which is the context in which the event happened; type, which is used for routing notifications; subject, which is the subject of event in context of service; seriesId, which is an optional Id that groups events from the same source in a series; timestamp, which is when the event happened; and data, which is optional additional information associated with the event."}
+{"prompt": "How is a subscription created in Tapis and what information does it contain?", "completion": "A service can create a subscription for an event type in Tapis. A subscription contains the following information: name, which is an optional short descriptive name; owner, which is a specific user set at create time; description, which is an optional more verbose description; typeFilter, which is a filter used when matching events; subjectFilter, which is a filter used when matching events; deliveryTargets, which is a list of targets to be used when delivering an event; ttlMinutes, which is the time to live in minutes; and expiry, which is the time at which the subscription expires."}
+{"prompt": "What is the format of an event type in Tapis?", "completion": "The identifier for each event type in Tapis must have three parts in the format **\<service\>.\<category\>.\<detail\>**. For example *jobs.JOB_NEW_STATUS.PENDING*, *apps.APP.UPDATE* or *files.OBJECT.DELETE*."}{"prompt": "How does the dispatch service assign events to a bucket manager?", "completion": "The dispatch service assigns events to a bucket manager by taking a hash of the event source, subject and seriesId."}
+{"prompt": "How can I configure the Tapis Notifications service for email delivery?", "completion": "To configure the Tapis Notifications service for email delivery, you need to set up an SMTP relay. This is done by setting environment variables for the dispatcher service. The environment variables used to configure email delivery include TAPIS_MAIL_PROVIDER, TAPIS_SMTP_HOST, TAPIS_SMTP_PORT, TAPIS_SMTP_FROM_NAME, TAPIS_SMTP_FROM_ADDRESS, TAPIS_SMTP_AUTH, TAPIS_SMTP_USER, and TAPIS_SMTP_PASSWORD."}
+{"prompt": "What happens when the notification delivery method is of type WEBHOOK?", "completion": "When the notification delivery method is of type WEBHOOK, the dispatch worker will deliver the notification using an HTTP POST request. The media type for the request will be application/json and the following header will be added: User-Agent: Tapis/v3. The request body will be a json structure with the notification information."}{"prompt": "What is the pattern for the 'type' attribute in an event?", "completion": "The pattern for the 'type' attribute in an event is [\<service\>.\<category\>.\<detail\>]. This is used for routing notifications."}
 
-2. Question: How are events delivered in Tapis?
-   Answer: The events in Tapis are delivered asynchronously using a publish-subscribe model.
+{"prompt": "What does the 'subject' attribute represent in an event?", "completion": "The 'subject' attribute in an event represents the subject of the event in the context of the service. Examples can include job Id, app Id, file path, role name, etc."}
 
-3. Question: What is the model for a notification event based on?
-   Answer: The model for a notification event is based on the CloudEvent specification version 1.0.
-
-4. Question: What information does an event contain?
-   Answer: An event contains information such as source, type, subject, seriesId, timestamp, and data.
-
-5. Question: What does an event type represent?
-   Answer: An event type represents a channel through which users and services receive events.
-
-6. Question: What is a subscription in Tapis?
-   Answer: A subscription in Tapis is created by a service for an event type to allow users and services to receive events.
-
-7. Question: What are the delivery methods supported by Tapis?
-   Answer: Tapis supports two delivery methods, WEBHOOK and EMAIL.
-
-8. Question: What does a delivery target contain?
-   Answer: A delivery target contains the delivery method and the delivery address.
-
-9. Question: What is a notification in Tapis?
-   Answer: A notification in Tapis is an object encapsulating the information sent to a delivery target.
-
-10. Question: What information does a notification contain?
-    Answer: A notification contains information such as uuid, event, eventUuid, tenant, subscriptionName, deliveryTarget, and created timestamp.1. Q: What is the role of the dispatch service in the Notifications front end api service?
-   A: The dispatch service reads events from the queue and assigns them to workers known as delivery bucket managers. It assigns events to a bucket manager by taking a hash of the event source, subject, and seriesId.
-
-2. Q: How does a bucket manager worker process an event?
-   A: A bucket manager worker processes an event by first finding all matching subscriptions by querying a database. It then creates a Notification object for each delivery target in each matching subscription and persists it to a database. The worker then begins the process of delivering the notifications.
-
-3. Q: How is the Tapis Notifications service configured for EMAIL delivery?
-   A: The Tapis Notifications service is configured for EMAIL delivery by using an SMTP relay. Parameters for the relay are set as environment variables to be picked up by the dispatcher service when it is started during a deployment.
-
-4. Q: What happens when the notification delivery method is of type EMAIL?
-   A: When the notification delivery method is of type EMAIL, the dispatch worker sends an email using SMTP. The 'To:' field for the email will be the notification delivery address and the 'From:' field will depend on the configuration parameters.
-
-5. Q: What happens when the notification delivery method is of type WEBHOOK?
-   A: When the notification delivery method is of type WEBHOOK, the dispatch worker delivers the notification using an HTTP POST request. The media type for the request will be application/json and the following header will be added: `User-Agent: Tapis/v3`.
-
-6. Q: What are the attributes of a subscription?
-   A: The attributes of a subscription include tenant, name, owner, description, enabled, typeFilter, subjectFilter, deliveryTargets, ttlMinutes, expiry, uuid, created, and updated.
-
-7. Q: What is the purpose of the 'enabled' attribute in a subscription?
-   A: The 'enabled' attribute indicates if the subscription is active. It can be updated using the enable/disable endpoints.
-
-8. Q: What is the 'ttlMinutes' attribute in a subscription?
-   A: The 'ttlMinutes' attribute is the time to live in minutes. The service will compute expiry based on this attribute.
-
-9. Q: What is the 'expiry' attribute in a subscription?
-   A: The 'expiry' attribute is the time at which the subscription expires and will be deleted. It is maintained by the service and computed at create time.
-
-10. Q: What is the 'uuid' attribute in a subscription?
-    A: The 'uuid' attribute is auto-generated by the service.1. Question: What does the attribute 'source' represent in the event attributes?
-   Answer: The 'source' attribute represents the context in which the event happened.
-
-2. Question: What is the 'type' attribute used for in the event attributes?
-   Answer: The 'type' attribute is used for routing notifications.
-
-3. Question: What does the 'subject' attribute represent in the event attributes?
-   Answer: The 'subject' attribute represents the subject of the event in the context of the service. Examples include job Id, app Id, file path, role name, etc.
-
-4. Question: What is the 'data' attribute in the event attributes?
-   Answer: The 'data' attribute is optional additional information associated with the event. It is specific to the service associated with the event.
-
-5. Question: What is the purpose of the 'seriesId' attribute in the event attributes?
-   Answer: The 'seriesId' attribute is an optional Id that groups events from the same source in a series. It preserves event order during notification delivery.
-
-6. Question: What does the 'timestamp' attribute represent in the event attributes?
-   Answer: The 'timestamp' attribute represents when the event happened.
-
-7. Question: What does the 'uuid' attribute represent in the notification attributes?
-   Answer: The 'uuid' attribute is a unique identifier for the notification.
-
-8. Question: What does the 'tenant' attribute represent in the notification attributes?
-   Answer: The 'tenant' attribute represents the tenant associated with the notification.
-
-9. Question: What is the 'subscriptionName' attribute in the notification attributes?
-   Answer: The 'subscriptionName' attribute is the name of the subscription associated with the notification.
-
-10. Question: What does the 'deliveryTarget' attribute represent in the notification attributes?
-    Answer: The 'deliveryTarget' attribute represents the delivery target for the notification.
+{"prompt": "What is the purpose of the 'seriesId' attribute in an event?", "completion": "The 'seriesId' attribute in an event is an optional Id that groups events from the same source in a series. It is used to preserve the event order during notification delivery."}
