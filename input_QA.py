@@ -43,11 +43,11 @@ def gpt4(question, tokens=500):
             text_parts.append(line)
 
     # Print the text parts
-    '''for line in text_parts:
-        print(line)'''
+    """for line in text_parts:
+        print(line)"""
 
     # Print a separator
-    '''print("\n" + "-" * 50 + "\n")'''
+    """print("\n" + "-" * 50 + "\n")"""
 
     # Print the code parts
     for line in code_parts:
@@ -92,8 +92,8 @@ for json_str in temp:
     content.append(result)
 
 
-jsonl_data = []
-for file in os.listdir("md_files"):
+jsonl_data = {}
+for file in os.listdir("dummyin"):
     p_list = []
     p_holder = []
     for item in content:
@@ -102,27 +102,36 @@ for file in os.listdir("md_files"):
             p_holder = []
         if item["filename"] == file:
             p_holder.append(f'Question: {item["prompt"]}, Result: {item["completion"]}')
+            p_holder.append("\n")
     p_list.append("\n".join(p_holder))
 
-    results = []
+    results = {}
     count = 1
     for p_context in p_list:
-        print(f'Running batch {count} of {len(p_list) + 1} for {file}')
-        prompt = f'{p1} {p_context}. \n {p2}'
+        print(f"Running batch {count} of {len(p_list) + 1} for {file}")
+        prompt = f"{p1} {p_context}. \n {p2}"
 
-        results.append(gpt4(prompt, 2000))
-
+        results[f"{file}{count}"] = gpt4(prompt, 2000)
         count += 1
-        print('Allowing rate limit to reset, wait one minute please...')
-        for i in tqdm(range(20)):
-            sleep(3)
+        print("Allowing rate limit to reset, wait one minute please...")
+        for i in tqdm(range(1)):
+            sleep(1)
+    with open(os.path.join("dummyout", str(Path(file).stem) + ".txt"), "w") as f:
+        for i in results.keys():
+            f.write(results[i])
+            jsonl_data[i] = results[i]
 
-    with open(os.path.join("qa_output", str(Path(file).stem) + ".txt"), "w") as f:
-        for i in results:
-            f.write(i)
-            jsonl_data.append(i)
+bad_data = []
+for i in jsonl_data.keys():
+    print(type(jsonl_data[i]))
+    if jsonl_data[i] == "Insufficient data is provided.":
+        bad_data.append(i)
+    else:
+        print(jsonl_data[i], "\n ------------------------------- ")
 
+for i in bad_data:
+    del jsonl_data[i]
 
-with open('jsonl_files/qa_output.jsonl', 'w') as f:
-    for i in jsonl_data:
-        f.write(i)
+with open("dummyout/qa_output.jsonl", "w") as f:
+    for i in jsonl_data.keys():
+        f.write(jsonl_data[i])
