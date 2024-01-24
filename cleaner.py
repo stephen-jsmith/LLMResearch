@@ -4,6 +4,13 @@ import os
 
 
 def cleaner(input_file: str, output_file: str):
+    """Clean the jsonl file to be readable by the database
+    
+    Args:
+        input_file (str): File to clean
+        output_file (str): File to output to
+    """
+
     # Load data and get it in a readable format
     ls = []
     with open(input_file, "r") as f:

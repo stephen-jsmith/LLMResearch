@@ -43,12 +43,12 @@ def compute_doc_embeddings(df: pd.DataFrame):
 
 
 def vectorize_data(inputDir: str, outputDir: str, ignoreDuplicates: bool = True) -> list:
-    """
-    Takes in a directory of markdown files to vectorize
+    """Takes in a directory of markdown files to vectorize
 
-    ##### Args #####
-    :type dir: str
-    :arg dir: Directory of the files you wish to vectorize
+    Args:
+        inputDir (str): Directory of markdown files
+        outputDir (str): Directory to output the vectorized files
+        ignoreDuplicates (bool, optional): Whether to ignore duplicate files. Defaults to True.
     """
 
     ret_list = []

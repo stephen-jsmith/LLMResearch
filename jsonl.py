@@ -4,7 +4,12 @@ import os
 
 
 def md_to_jsonl(md_file_dir, jsonl_file):
-    """Converts a given directory of markdown files to a combined jsonl file."""
+    """Convert markdown files to JSONL format
+    
+    Args:
+        md_file_dir (str): Directory of markdown files
+        jsonl_file (str): Path to the output JSONL file
+    """
     jsonl_data = []
 
     for md_file_path in os.listdir(md_file_dir):
