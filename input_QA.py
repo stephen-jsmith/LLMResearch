@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 from tqdm import tqdm
 from time import sleep
+from cleaner import *
 
 COMPLETIONS_MODEL = "text-davinci-003"
 EMBEDDING_MODEL = "text-embedding-ada-002"
@@ -19,6 +20,14 @@ client = OpenAI(api_key=apiKey)
 
 
 def gpt4(question, tokens=500):
+    """Generate a question from a given context
+
+    Args:
+        question (str): Context to generate a question from
+        tokens (int, optional): Number of tokens to generate. Defaults to 500.
+    """
+
+    # Create the messages
     messages = [{"role": "user", "content": question}]
 
     response = client.chat.completions.create(

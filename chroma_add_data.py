@@ -26,14 +26,13 @@ def add_data_pandas(
     client: chromadb.PersistentClient,
     collection_name: str,
 ):
-    """
-    Takes in a pandas dataframe and adds it to the chroma db
-
-    Keyword Arguments:
-    df -- A Pandas DataFrame that has previously been vectorized and is ready to be added
-    filename -- The file that the data came from. This is used for creating indices
-    client -- A chromadb client(can be either Normal or Persistent) for the data to be added to
-    collection_name -- Location within the chromadb for the data to be added to
+    """Add data to the database from a pandas dataframe
+    
+    Args:
+        df (pd.DataFrame): Dataframe to add to the database
+        filename (str): Name of the file
+        client (chromadb.PersistentClient): Chroma client
+        collection_name (str): Name of the collection to add the data to
     """
 
     # Verify there is data to add
