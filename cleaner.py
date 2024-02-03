@@ -49,5 +49,5 @@ def cleaner(input_file: str, output_file: str):
                 if i != "{":
                     f.write(i)
 
-
-cleaner("jsonl_files/qa_output.jsonl", "jsonl_files/qa_clean.jsonl")
+if __name__ == "__main__":
+    cleaner("jsonl_files/qa_output.jsonl", "jsonl_files/qa_clean.jsonl")
