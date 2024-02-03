@@ -44,13 +44,14 @@ def compute_doc_embeddings(df: pd.DataFrame):
     return {idx: get_embedding(r.content) for idx, r in df.iterrows()}
 
 
-def vectorize_data(inputDir: str, outputDir: str, ignoreDuplicates: bool = True) -> list:
+def vectorize_data(inputDir: str, outputDir: str, ignoreDuplicates: bool = True, to_csv: bool = False) -> list:
     """Takes in a directory of markdown files to vectorize
 
     Args:
         inputDir (str): Directory of markdown files
         outputDir (str): Directory to output the vectorized files
         ignoreDuplicates (bool, optional): Whether to ignore duplicate files. Defaults to True.
+        to_csv (bool, optional): Whether to output the vectorized files as csv files. Defaults to False.
     """
 
     ret_list = []
@@ -102,10 +103,12 @@ def vectorize_data(inputDir: str, outputDir: str, ignoreDuplicates: bool = True)
         ret_list.append(df)
         filenames.append(context)
         
-        '''df.to_csv(os.path.join(outputDir, context.rsplit(".", 1)[0] + ".csv"))'''
+        if to_csv:
+            df.to_csv(os.path.join(outputDir, context.rsplit(".", 1)[0] + ".csv"))
+
         print(f"Successfully vectorized {context}!")
 
     return ret_list, filenames
 
-
-vectorize_data("md_files", "vectorized_dataframes")
+if __name__ == "__main__":
+    vectorize_data("md_files", "vectorized_dataframes")

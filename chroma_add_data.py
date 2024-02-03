@@ -27,7 +27,7 @@ def add_data_pandas(
     collection_name: str,
 ):
     """Add data to the database from a pandas dataframe
-    
+
     Args:
         df (pd.DataFrame): Dataframe to add to the database
         filename (str): Name of the file
@@ -58,15 +58,13 @@ def add_data_pandas(
     return
 
 
-chroma_client = chromadb.PersistentClient(path="./chroma_save_states")
+if __name__ == "__main__":
+    # The following is an example of how to use the add_data_pandas function
+    chroma_client = chromadb.PersistentClient(path="./chroma_save_states")
 
-vector_dataframes, filenames = vectorize_data("md_files", "vectorized_dataframes")
-for i in range(len(vector_dataframes)):
-    add_data_pandas(vector_dataframes[i], filenames[i], chroma_client, "testing")
+    vector_dataframes, filenames = vectorize_data("md_files", "vectorized_dataframes")
+    for i in range(len(vector_dataframes)):
+        add_data_pandas(vector_dataframes[i], filenames[i], chroma_client, "testing")
 
-collection = chroma_client.get_collection("testing")
-collection.query(query_texts=["What is Abaca?"], n_results=5)
-
-print(chroma_client)
-
-chroma_client.hearbeat()
+    collection = chroma_client.get_collection("testing")
+    collection.query(query_texts=["What is Abaca?"], n_results=5)
