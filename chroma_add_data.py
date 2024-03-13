@@ -44,10 +44,14 @@ def add_data_pandas(
     collection = client.get_or_create_collection(
         name=collection_name, embedding_function=ef
     )
-
-    meta = []
-    for i in df["heading"]:
-        meta.append({filename: i})
+    if "heading" in df.columns:
+        meta = []
+        for i in df["heading"]:
+            meta.append({filename: i})
+    else:
+        meta = []
+        for i in range(len(df.index)):
+            meta.append({filename: "i"})
 
     collection.add(
         documents=df["content"].tolist(),
