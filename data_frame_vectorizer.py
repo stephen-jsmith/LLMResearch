@@ -110,11 +110,7 @@ def vectorize_data(inputDir: str, outputDir: str, ignoreDuplicates: bool = True,
         df = df.reset_index().drop("index", axis=1)  # reset index
         df.head()
 
-<<<<<<< HEAD
-        vector_embedding = compute_doc_embeddings_opensource(df)
-=======
         vector_embedding = compute_doc_embeddings("content",df)
->>>>>>> 45279f145b0f205dd502ab81f626cd70feb2f620
 
         df["vector_embedding"] = pd.Series(vector_embedding)
         
