@@ -11,6 +11,7 @@ import numpy as np
 from nltk.tokenize import sent_tokenize
 import glob
 import json
+from sentence_transformers import SentenceTransformer
 
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
@@ -42,6 +43,19 @@ def compute_doc_embeddings(df: pd.DataFrame):
     Return a dictionary that maps between each embedding vector and the index of the row that it corresponds to.
     """
     return {idx: get_embedding(r.content) for idx, r in df.iterrows()}
+
+
+# Define functions that don't rely on GPT products for embeddings
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+
+def compute_doc_embeddings_opensource(df: pd.DataFrame):
+    embeddings = model.encode(df["content"])
+    ret_dict = {}
+    count = 0
+    for i in embeddings:
+        ret_dict[count] = i
+        count += 1
+    return ret_dict
 
 
 def vectorize_data(inputDir: str, outputDir: str, ignoreDuplicates: bool = True, to_csv: bool = False) -> list:
@@ -96,7 +110,7 @@ def vectorize_data(inputDir: str, outputDir: str, ignoreDuplicates: bool = True,
         df = df.reset_index().drop("index", axis=1)  # reset index
         df.head()
 
-        vector_embedding = compute_doc_embeddings(df)
+        vector_embedding = compute_doc_embeddings_opensource(df)
 
         df["vector_embedding"] = pd.Series(vector_embedding)
         

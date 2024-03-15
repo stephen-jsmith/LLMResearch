@@ -14,8 +14,9 @@ COMPLETIONS_MODEL = "text-davinci-003"
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
 # Authenticate with OpenAI API
-with open("apiKeys.txt", "r") as temp:
-    apiKey = temp.read()
+with open("apiKeys.json", "r") as temp:
+    keys = json.load(temp)
+    apiKey = keys["GPT"]
 client = OpenAI(api_key=apiKey)
 
 
