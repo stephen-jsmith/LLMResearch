@@ -36,13 +36,13 @@ def get_embedding(text: str, model: str = EMBEDDING_MODEL):
     return result
 
 
-def compute_doc_embeddings(df: pd.DataFrame):
+def compute_doc_embeddings(target:str,df: pd.DataFrame):
     """
     Create an embedding for each row in the dataframe using the OpenAI Embeddings API.
 
     Return a dictionary that maps between each embedding vector and the index of the row that it corresponds to.
     """
-    return {idx: get_embedding(r.content) for idx, r in df.iterrows()}
+    return {idx: get_embedding(r.target) for idx, r in df.iterrows()}
 
 
 # Define functions that don't rely on GPT products for embeddings
@@ -110,7 +110,11 @@ def vectorize_data(inputDir: str, outputDir: str, ignoreDuplicates: bool = True,
         df = df.reset_index().drop("index", axis=1)  # reset index
         df.head()
 
+<<<<<<< HEAD
         vector_embedding = compute_doc_embeddings_opensource(df)
+=======
+        vector_embedding = compute_doc_embeddings("content",df)
+>>>>>>> 45279f145b0f205dd502ab81f626cd70feb2f620
 
         df["vector_embedding"] = pd.Series(vector_embedding)
         
